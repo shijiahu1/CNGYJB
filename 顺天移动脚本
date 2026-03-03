@@ -627,7 +627,7 @@ local TeleportPoints = {
 	{name = "港口", pos = Vector3.new(2348, 45, -349)},
 	{name = "出生地", pos = Vector3.new(942.4, 45.9, -782.3)},
 	{name = "河南盾牌", pos = Vector3.new(1087.5, 44.7, -1552.2)},
-	{name = "工地", pos = Vector3.new(763, 45, -512)},
+	{name = "工地", pos = Vector3.new(930.9, 44.7, -253.5)},
 }
 
 -- ========== 创建GUI ==========
