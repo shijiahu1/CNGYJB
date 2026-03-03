@@ -1,0 +1,1204 @@
+local function CreateOptimizedUI()
+	if game:GetService("CoreGui"):FindFirstChild("DarkTeleportV3") then
+		game:GetService("CoreGui").DarkTeleportV3:Destroy()
+	end
+
+	local ScreenGui = Instance.new("ScreenGui")
+	ScreenGui.Name = "DarkTeleportV3"
+	ScreenGui.Parent = game:GetService("CoreGui")
+	ScreenGui.ResetOnSpawn = false
+	ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+	ScreenGui.DisplayOrder = 999999
+
+	-- 主容器
+	local MainContainer = Instance.new("Frame")
+	MainContainer.Name = "MainContainer"
+	MainContainer.Parent = ScreenGui
+	MainContainer.BackgroundColor3 = Color3.fromRGB(5, 5, 10)
+	MainContainer.BackgroundTransparency = 0.1
+	MainContainer.BorderSizePixel = 0
+	MainContainer.Position = UDim2.new(0.5, -400, 0.5, -300)
+	MainContainer.Size = UDim2.new(0, 800, 0, 600)
+	MainContainer.Active = true
+	MainContainer.ClipsDescendants = true
+
+	-- 玻璃效果
+	local GlassEffect = Instance.new("Frame")
+	GlassEffect.Parent = MainContainer
+	GlassEffect.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	GlassEffect.BackgroundTransparency = 0.98
+	GlassEffect.BorderSizePixel = 0
+	GlassEffect.Size = UDim2.new(1, 0, 1, 0)
+	GlassEffect.ZIndex = 2
+
+	-- 霓虹边框
+	local Border = Instance.new("Frame")
+	Border.Parent = MainContainer
+	Border.BackgroundTransparency = 1
+	Border.BorderSizePixel = 2
+	Border.Size = UDim2.new(1, 0, 1, 0)
+	Border.ZIndex = 10
+	Border.BorderColor3 = Color3.fromRGB(180, 0, 255)
+
+	local UICorner = Instance.new("UICorner")
+	UICorner.CornerRadius = UDim.new(0, 12)
+	UICorner.Parent = MainContainer
+
+	-- ========== 标题栏 ==========
+	local TitleBar = Instance.new("Frame")
+	TitleBar.Name = "TitleBar"
+	TitleBar.Parent = MainContainer
+	TitleBar.BackgroundColor3 = Color3.fromRGB(8, 8, 15)
+	TitleBar.BackgroundTransparency = 0.2
+	TitleBar.BorderSizePixel = 0
+	TitleBar.Size = UDim2.new(1, 0, 0, 40)
+
+	local TitleCorner = Instance.new("UICorner")
+	TitleCorner.CornerRadius = UDim.new(0, 12)
+	TitleCorner.Parent = TitleBar
+
+	local Title = Instance.new("TextLabel")
+	Title.Parent = TitleBar
+	Title.BackgroundTransparency = 1
+	Title.Position = UDim2.new(0, 15, 0, 0)
+	Title.Size = UDim2.new(0.5, 0, 1, 0)
+	Title.Font = Enum.Font.GothamBold
+	Title.Text = " 顺天传送脚本v1.2"
+	Title.TextColor3 = Color3.fromRGB(200, 180, 255)
+	Title.TextSize = 18
+	Title.TextXAlignment = Enum.TextXAlignment.Left
+
+	-- 关闭按钮
+	local CloseButton = Instance.new("TextButton")
+	CloseButton.Name = "CloseButton"
+	CloseButton.Parent = TitleBar
+	CloseButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+	CloseButton.BackgroundTransparency = 0.1
+	CloseButton.Position = UDim2.new(1, -45, 0, 5)
+	CloseButton.Size = UDim2.new(0, 35, 0, 30)
+	CloseButton.Font = Enum.Font.GothamBold
+	CloseButton.Text = "✕"
+	CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+	CloseButton.TextSize = 18
+
+	local CloseCorner = Instance.new("UICorner")
+	CloseCorner.CornerRadius = UDim.new(0, 8)
+	CloseCorner.Parent = CloseButton
+
+	-- ========== 左侧面板 ==========
+	local LeftPanel = Instance.new("Frame")
+	LeftPanel.Name = "LeftPanel"
+	LeftPanel.Parent = MainContainer
+	LeftPanel.BackgroundColor3 = Color3.fromRGB(8, 8, 15)
+	LeftPanel.BackgroundTransparency = 0.2
+	LeftPanel.BorderSizePixel = 0
+	LeftPanel.Position = UDim2.new(0, 0, 0, 40)
+	LeftPanel.Size = UDim2.new(0, 200, 1, -40)
+
+	local LeftCorner = Instance.new("UICorner")
+	LeftCorner.CornerRadius = UDim.new(0, 12)
+	LeftCorner.Parent = LeftPanel
+
+	-- 左侧标题
+	local LeftTitle = Instance.new("TextLabel")
+	LeftTitle.Parent = LeftPanel
+	LeftTitle.BackgroundTransparency = 1
+	LeftTitle.Position = UDim2.new(0, 15, 0, 20)
+	LeftTitle.Size = UDim2.new(1, -30, 0, 30)
+	LeftTitle.Font = Enum.Font.GothamBold
+	LeftTitle.Text = " 功能菜单"
+	LeftTitle.TextColor3 = Color3.fromRGB(200, 180, 255)
+	LeftTitle.TextSize = 18
+	LeftTitle.TextXAlignment = Enum.TextXAlignment.Left
+
+	-- 功能按钮列表
+	local ButtonList = {" 当前位置", " 传送控制", " 玩家列表", " 功能开关"}
+	local ButtonIcons = {"", "", "", ""}
+	local ButtonY = 60
+
+	for i, name in ipairs(ButtonList) do
+		local FuncButton = Instance.new("TextButton")
+		FuncButton.Name = "MenuBtn_" .. i
+		FuncButton.Parent = LeftPanel
+		FuncButton.BackgroundColor3 = i == 1 and Color3.fromRGB(100, 50, 200) or Color3.fromRGB(20, 20, 30)
+		FuncButton.BackgroundTransparency = i == 1 and 0.1 or 0.3
+		FuncButton.Position = UDim2.new(0, 10, 0, ButtonY)
+		FuncButton.Size = UDim2.new(1, -20, 0, 45)
+		FuncButton.Font = Enum.Font.GothamBold
+		FuncButton.Text = ButtonIcons[i] .. "  " .. name
+		FuncButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+		FuncButton.TextSize = 14
+		FuncButton.TextXAlignment = Enum.TextXAlignment.Left
+
+		local BtnCorner = Instance.new("UICorner")
+		BtnCorner.CornerRadius = UDim.new(0, 8)
+		BtnCorner.Parent = FuncButton
+
+		FuncButton:SetAttribute("Index", i)
+
+		ButtonY = ButtonY + 55
+	end
+
+	-- 版本信息
+	local VersionLabel = Instance.new("TextLabel")
+	VersionLabel.Parent = LeftPanel
+	VersionLabel.BackgroundTransparency = 1
+	VersionLabel.Position = UDim2.new(0, 10, 1, -40)
+	VersionLabel.Size = UDim2.new(1, -20, 0, 30)
+	VersionLabel.Font = Enum.Font.Gotham
+	VersionLabel.Text = "v1.2ST传送"
+	VersionLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
+	VersionLabel.TextSize = 12
+
+	-- ========== 右侧内容区域 ==========
+	local RightPanel = Instance.new("Frame")
+	RightPanel.Name = "RightPanel"
+	RightPanel.Parent = MainContainer
+	RightPanel.BackgroundColor3 = Color3.fromRGB(10, 10, 18)
+	RightPanel.BackgroundTransparency = 0.15
+	RightPanel.BorderSizePixel = 0
+	RightPanel.Position = UDim2.new(0, 200, 0, 40)
+	RightPanel.Size = UDim2.new(1, -200, 1, -40)
+
+	local RightCorner = Instance.new("UICorner")
+	RightCorner.CornerRadius = UDim.new(0, 12)
+	RightCorner.Parent = RightPanel
+
+	-- ========== 页面1: 当前位置 ==========
+	local Page1 = Instance.new("Frame")
+	Page1.Name = "Page1"
+	Page1.Parent = RightPanel
+	Page1.BackgroundTransparency = 1
+	Page1.Size = UDim2.new(1, 0, 1, 0)
+	Page1.Visible = true
+
+	-- 当前位置卡片
+	local CurrentPosCard = Instance.new("Frame")
+	CurrentPosCard.Parent = Page1
+	CurrentPosCard.BackgroundColor3 = Color3.fromRGB(15, 15, 25)
+	CurrentPosCard.BackgroundTransparency = 0.2
+	CurrentPosCard.Position = UDim2.new(0, 20, 0, 20)
+	CurrentPosCard.Size = UDim2.new(1, -40, 0, 120)
+
+	local CardCorner = Instance.new("UICorner")
+	CardCorner.CornerRadius = UDim.new(0, 12)
+	CardCorner.Parent = CurrentPosCard
+
+	local PosTitle = Instance.new("TextLabel")
+	PosTitle.Parent = CurrentPosCard
+	PosTitle.BackgroundTransparency = 1
+	PosTitle.Position = UDim2.new(0, 20, 0, 15)
+	PosTitle.Size = UDim2.new(1, -40, 0, 25)
+	PosTitle.Font = Enum.Font.GothamBold
+	PosTitle.Text = " 当前位置"
+	PosTitle.TextColor3 = Color3.fromRGB(150, 150, 255)
+	PosTitle.TextSize = 18
+	PosTitle.TextXAlignment = Enum.TextXAlignment.Left
+
+	-- 坐标显示
+	local CoordFrame = Instance.new("Frame")
+	CoordFrame.Parent = CurrentPosCard
+	CoordFrame.BackgroundTransparency = 1
+	CoordFrame.Position = UDim2.new(0, 20, 0, 45)
+	CoordFrame.Size = UDim2.new(0.8, 0, 0, 60)
+
+	local XLabel = Instance.new("TextLabel")
+	XLabel.Parent = CoordFrame
+	XLabel.BackgroundTransparency = 1
+	XLabel.Position = UDim2.new(0, 0, 0, 0)
+	XLabel.Size = UDim2.new(0.33, 0, 0.5, 0)
+	XLabel.Font = Enum.Font.GothamBold
+	XLabel.Text = "X"
+	XLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+	XLabel.TextSize = 14
+
+	local XValue = Instance.new("TextLabel")
+	XValue.Name = "XValue"
+	XValue.Parent = CoordFrame
+	XValue.BackgroundTransparency = 1
+	XValue.Position = UDim2.new(0, 0, 0.5, 0)
+	XValue.Size = UDim2.new(0.33, 0, 0.5, 0)
+	XValue.Font = Enum.Font.GothamBold
+	XValue.Text = "0.0"
+	XValue.TextColor3 = Color3.fromRGB(255, 255, 255)
+	XValue.TextSize = 20
+
+	local YLabel = Instance.new("TextLabel")
+	YLabel.Parent = CoordFrame
+	YLabel.BackgroundTransparency = 1
+	YLabel.Position = UDim2.new(0.33, 0, 0, 0)
+	YLabel.Size = UDim2.new(0.33, 0, 0.5, 0)
+	YLabel.Font = Enum.Font.GothamBold
+	YLabel.Text = "Y"
+	YLabel.TextColor3 = Color3.fromRGB(100, 255, 100)
+	YLabel.TextSize = 14
+
+	local YValue = Instance.new("TextLabel")
+	YValue.Name = "YValue"
+	YValue.Parent = CoordFrame
+	YValue.BackgroundTransparency = 1
+	YValue.Position = UDim2.new(0.33, 0, 0.5, 0)
+	YValue.Size = UDim2.new(0.33, 0, 0.5, 0)
+	YValue.Font = Enum.Font.GothamBold
+	YValue.Text = "0.0"
+	YValue.TextColor3 = Color3.fromRGB(255, 255, 255)
+	YValue.TextSize = 20
+
+	local ZLabel = Instance.new("TextLabel")
+	ZLabel.Parent = CoordFrame
+	ZLabel.BackgroundTransparency = 1
+	ZLabel.Position = UDim2.new(0.66, 0, 0, 0)
+	ZLabel.Size = UDim2.new(0.33, 0, 0.5, 0)
+	ZLabel.Font = Enum.Font.GothamBold
+	ZLabel.Text = "Z"
+	ZLabel.TextColor3 = Color3.fromRGB(100, 100, 255)
+	ZLabel.TextSize = 14
+
+	local ZValue = Instance.new("TextLabel")
+	ZValue.Name = "ZValue"
+	ZValue.Parent = CoordFrame
+	ZValue.BackgroundTransparency = 1
+	ZValue.Position = UDim2.new(0.66, 0, 0.5, 0)
+	ZValue.Size = UDim2.new(0.33, 0, 0.5, 0)
+	ZValue.Font = Enum.Font.GothamBold
+	ZValue.Text = "0.0"
+	ZValue.TextColor3 = Color3.fromRGB(255, 255, 255)
+	ZValue.TextSize = 20
+
+	-- 复制按钮
+	local CopyBtn = Instance.new("TextButton")
+	CopyBtn.Name = "CopyBtn"
+	CopyBtn.Parent = CurrentPosCard
+	CopyBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 150)
+	CopyBtn.BackgroundTransparency = 0.2
+	CopyBtn.Position = UDim2.new(0.8, 0, 0, 45)
+	CopyBtn.Size = UDim2.new(0.15, 0, 0, 40)
+	CopyBtn.Font = Enum.Font.GothamBold
+	CopyBtn.Text = " 复制"
+	CopyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+	CopyBtn.TextSize = 14
+
+	local CopyCorner = Instance.new("UICorner")
+	CopyCorner.CornerRadius = UDim.new(0, 8)
+	CopyCorner.Parent = CopyBtn
+
+	-- ========== 页面2: 传送控制 ==========
+	local Page2 = Instance.new("Frame")
+	Page2.Name = "Page2"
+	Page2.Parent = RightPanel
+	Page2.BackgroundTransparency = 1
+	Page2.Size = UDim2.new(1, 0, 1, 0)
+	Page2.Visible = false
+
+	-- 传送控制卡片
+	local TeleportCard = Instance.new("Frame")
+	TeleportCard.Parent = Page2
+	TeleportCard.BackgroundColor3 = Color3.fromRGB(15, 15, 25)
+	TeleportCard.BackgroundTransparency = 0.2
+	TeleportCard.Position = UDim2.new(0, 20, 0, 20)
+	TeleportCard.Size = UDim2.new(1, -40, 0, 150)
+
+	local TeleportCorner = Instance.new("UICorner")
+	TeleportCorner.CornerRadius = UDim.new(0, 12)
+	TeleportCorner.Parent = TeleportCard
+
+	local TeleportTitle = Instance.new("TextLabel")
+	TeleportTitle.Parent = TeleportCard
+	TeleportTitle.BackgroundTransparency = 1
+	TeleportTitle.Position = UDim2.new(0, 20, 0, 15)
+	TeleportTitle.Size = UDim2.new(1, -40, 0, 25)
+	TeleportTitle.Font = Enum.Font.GothamBold
+	TeleportTitle.Text = " 传送控制"
+	TeleportTitle.TextColor3 = Color3.fromRGB(150, 255, 150)
+	TeleportTitle.TextSize = 18
+	TeleportTitle.TextXAlignment = Enum.TextXAlignment.Left
+
+	-- 坐标输入
+	local CoordInput = Instance.new("TextBox")
+	CoordInput.Name = "CoordInput"
+	CoordInput.Parent = TeleportCard
+	CoordInput.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+	CoordInput.PlaceholderColor3 = Color3.fromRGB(150, 150, 150)
+	CoordInput.Position = UDim2.new(0, 20, 0, 50)
+	CoordInput.Size = UDim2.new(0.7, -10, 0, 40)
+	CoordInput.Font = Enum.Font.Gotham
+	CoordInput.PlaceholderText = "输入坐标 (X, Y, Z) 或玩家名..."
+	CoordInput.Text = ""
+	CoordInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+	CoordInput.TextSize = 14
+
+	local InputCorner = Instance.new("UICorner")
+	InputCorner.CornerRadius = UDim.new(0, 8)
+	InputCorner.Parent = CoordInput
+
+	-- 传送按钮
+	local TeleportBtn = Instance.new("TextButton")
+	TeleportBtn.Name = "TeleportBtn"
+	TeleportBtn.Parent = TeleportCard
+	TeleportBtn.BackgroundColor3 = Color3.fromRGB(100, 50, 200)
+	TeleportBtn.BackgroundTransparency = 0.1
+	TeleportBtn.Position = UDim2.new(0.73, 0, 0, 50)
+	TeleportBtn.Size = UDim2.new(0.23, 0, 0, 40)
+	TeleportBtn.Font = Enum.Font.GothamBold
+	TeleportBtn.Text = " 传送"
+	TeleportBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+	TeleportBtn.TextSize = 16
+
+	local TeleportBtnCorner = Instance.new("UICorner")
+	TeleportBtnCorner.CornerRadius = UDim.new(0, 8)
+	TeleportBtnCorner.Parent = TeleportBtn
+
+	-- 快速传送点标题
+	local QuickTitle = Instance.new("TextLabel")
+	QuickTitle.Parent = Page2
+	QuickTitle.BackgroundTransparency = 1
+	QuickTitle.Position = UDim2.new(0, 30, 0, 190)
+	QuickTitle.Size = UDim2.new(1, -60, 0, 30)
+	QuickTitle.Font = Enum.Font.GothamBold
+	QuickTitle.Text = " 快速传送点"
+	QuickTitle.TextColor3 = Color3.fromRGB(200, 150, 255)
+	QuickTitle.TextSize = 16
+	QuickTitle.TextXAlignment = Enum.TextXAlignment.Left
+
+	-- 快速传送列表
+	local QuickTPList = Instance.new("ScrollingFrame")
+	QuickTPList.Name = "QuickTPList"
+	QuickTPList.Parent = Page2
+	QuickTPList.BackgroundColor3 = Color3.fromRGB(15, 15, 25)
+	QuickTPList.BackgroundTransparency = 0.2
+	QuickTPList.BorderSizePixel = 0
+	QuickTPList.Position = UDim2.new(0, 20, 0, 220)
+	QuickTPList.Size = UDim2.new(1, -40, 1, -240)
+	QuickTPList.CanvasSize = UDim2.new(0, 0, 0, 0)
+	QuickTPList.ScrollBarThickness = 6
+	QuickTPList.ScrollBarImageColor3 = Color3.fromRGB(180, 0, 255)
+
+	local QuickListCorner = Instance.new("UICorner")
+	QuickListCorner.CornerRadius = UDim.new(0, 8)
+	QuickListCorner.Parent = QuickTPList
+
+	-- ========== 页面3: 玩家列表 ==========
+	local Page3 = Instance.new("Frame")
+	Page3.Name = "Page3"
+	Page3.Parent = RightPanel
+	Page3.BackgroundTransparency = 1
+	Page3.Size = UDim2.new(1, 0, 1, 0)
+	Page3.Visible = false
+
+	local PlayerTitle = Instance.new("TextLabel")
+	PlayerTitle.Parent = Page3
+	PlayerTitle.BackgroundTransparency = 1
+	PlayerTitle.Position = UDim2.new(0, 30, 0, 20)
+	PlayerTitle.Size = UDim2.new(1, -60, 0, 30)
+	PlayerTitle.Font = Enum.Font.GothamBold
+	PlayerTitle.Text = " 在线玩家"
+	PlayerTitle.TextColor3 = Color3.fromRGB(255, 200, 150)
+	PlayerTitle.TextSize = 20
+	PlayerTitle.TextXAlignment = Enum.TextXAlignment.Left
+
+	local PlayerList = Instance.new("ScrollingFrame")
+	PlayerList.Name = "PlayerList"
+	PlayerList.Parent = Page3
+	PlayerList.BackgroundColor3 = Color3.fromRGB(15, 15, 25)
+	PlayerList.BackgroundTransparency = 0.2
+	PlayerList.BorderSizePixel = 0
+	PlayerList.Position = UDim2.new(0, 20, 0, 60)
+	PlayerList.Size = UDim2.new(1, -40, 1, -80)
+	PlayerList.CanvasSize = UDim2.new(0, 0, 0, 0)
+	PlayerList.ScrollBarThickness = 6
+	PlayerList.ScrollBarImageColor3 = Color3.fromRGB(180, 0, 255)
+
+	local PlayerListCorner = Instance.new("UICorner")
+	PlayerListCorner.CornerRadius = UDim.new(0, 8)
+	PlayerListCorner.Parent = PlayerList
+
+	-- ========== 页面4: 功能开关 ==========
+	local Page4 = Instance.new("Frame")
+	Page4.Name = "Page4"
+	Page4.Parent = RightPanel
+	Page4.BackgroundTransparency = 1
+	Page4.Size = UDim2.new(1, 0, 1, 0)
+	Page4.Visible = false
+
+	local FunctionCard = Instance.new("Frame")
+	FunctionCard.Parent = Page4
+	FunctionCard.BackgroundColor3 = Color3.fromRGB(15, 15, 25)
+	FunctionCard.BackgroundTransparency = 0.2
+	FunctionCard.Position = UDim2.new(0, 20, 0, 20)
+	FunctionCard.Size = UDim2.new(1, -40, 0, 380)
+
+	local FuncCardCorner = Instance.new("UICorner")
+	FuncCardCorner.CornerRadius = UDim.new(0, 12)
+	FuncCardCorner.Parent = FunctionCard
+
+	local FuncTitle = Instance.new("TextLabel")
+	FuncTitle.Parent = FunctionCard
+	FuncTitle.BackgroundTransparency = 1
+	FuncTitle.Position = UDim2.new(0, 20, 0, 15)
+	FuncTitle.Size = UDim2.new(1, -40, 0, 25)
+	FuncTitle.Font = Enum.Font.GothamBold
+	FuncTitle.Text = " 功能开关"
+	FuncTitle.TextColor3 = Color3.fromRGB(255, 220, 150)
+	FuncTitle.TextSize = 18
+	FuncTitle.TextXAlignment = Enum.TextXAlignment.Left
+
+	-- 功能开关列表
+	local Toggles = {
+		{name = " 穿墙模式", default = false},
+		{name = " 透视模式 (红色)", default = false},
+		{name = " 秒互动模式 (0.1s)", default = false},
+		{name = " 移动速度", default = false, hasSlider = true},
+		{name = " 无限跳跃", default = false}
+	}
+
+	local ToggleY = 55
+	local ToggleButtons = {}
+	local SpeedSlider = nil
+	local SpeedValue = nil
+
+	for i, toggle in ipairs(Toggles) do
+		local ToggleFrame = Instance.new("Frame")
+		ToggleFrame.Parent = FunctionCard
+		ToggleFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+		ToggleFrame.BackgroundTransparency = 0.3
+		ToggleFrame.Position = UDim2.new(0, 20, 0, ToggleY)
+		ToggleFrame.Size = UDim2.new(1, -40, 0, toggle.hasSlider and 70 or 45)
+
+		local ToggleCorner = Instance.new("UICorner")
+		ToggleCorner.CornerRadius = UDim.new(0, 8)
+		ToggleCorner.Parent = ToggleFrame
+
+		local ToggleLabel = Instance.new("TextLabel")
+		ToggleLabel.Parent = ToggleFrame
+		ToggleLabel.BackgroundTransparency = 1
+		ToggleLabel.Position = UDim2.new(0, 15, 0, 0)
+		ToggleLabel.Size = UDim2.new(0.6, 0, toggle.hasSlider and 0.5 or 1, 0)
+		ToggleLabel.Font = Enum.Font.Gotham
+		ToggleLabel.Text = toggle.name
+		ToggleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+		ToggleLabel.TextSize = 16
+		ToggleLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+		local ToggleBtn = Instance.new("TextButton")
+		ToggleBtn.Name = "Toggle_" .. i
+		ToggleBtn.Parent = ToggleFrame
+		ToggleBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+		ToggleBtn.Position = UDim2.new(0.8, 0, toggle.hasSlider and 0, 7.5)
+		ToggleBtn.Size = UDim2.new(0.15, 0, 0, 30)
+		ToggleBtn.Font = Enum.Font.GothamBold
+		ToggleBtn.Text = "OFF"
+		ToggleBtn.TextColor3 = Color3.fromRGB(255, 100, 100)
+		ToggleBtn.TextSize = 14
+
+		local ToggleBtnCorner = Instance.new("UICorner")
+		ToggleBtnCorner.CornerRadius = UDim.new(0, 6)
+		ToggleBtnCorner.Parent = ToggleBtn
+
+		ToggleButtons[i] = ToggleBtn
+
+		-- 如果是速度选项，添加滑块
+		if toggle.hasSlider then
+			local SliderFrame = Instance.new("Frame")
+			SliderFrame.Parent = ToggleFrame
+			SliderFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+			SliderFrame.Position = UDim2.new(0, 15, 0, 35)
+			SliderFrame.Size = UDim2.new(0.7, -20, 0, 20)
+
+			local SliderCorner = Instance.new("UICorner")
+			SliderCorner.CornerRadius = UDim.new(0, 10)
+			SliderCorner.Parent = SliderFrame
+
+			local SliderBtn = Instance.new("TextButton")
+			SliderBtn.Name = "SpeedSlider"
+			SliderBtn.Parent = SliderFrame
+			SliderBtn.BackgroundColor3 = Color3.fromRGB(100, 50, 200)
+			SliderBtn.BorderSizePixel = 0
+			SliderBtn.Position = UDim2.new(0, 0, 0, 0)
+			SliderBtn.Size = UDim2.new(0.5, 0, 1, 0)
+			SliderBtn.Text = ""
+
+			local SliderBtnCorner = Instance.new("UICorner")
+			SliderBtnCorner.CornerRadius = UDim.new(0, 10)
+			SliderBtnCorner.Parent = SliderBtn
+
+			local SpeedValueLabel = Instance.new("TextLabel")
+			SpeedValueLabel.Name = "SpeedValue"
+			SpeedValueLabel.Parent = ToggleFrame
+			SpeedValueLabel.BackgroundTransparency = 1
+			SpeedValueLabel.Position = UDim2.new(0.75, 0, 0, 35)
+			SpeedValueLabel.Size = UDim2.new(0.2, 0, 0, 20)
+			SpeedValueLabel.Font = Enum.Font.GothamBold
+			SpeedValueLabel.Text = "32"
+			SpeedValueLabel.TextColor3 = Color3.fromRGB(100, 255, 100)
+			SpeedValueLabel.TextSize = 14
+
+			SpeedSlider = SliderBtn
+			SpeedValue = SpeedValueLabel
+		end
+
+		ToggleY = ToggleY + (toggle.hasSlider and 80 or 55)
+	end
+
+	-- ========== 左下角玩家提示 ==========
+	local NotificationFrame = Instance.new("Frame")
+	NotificationFrame.Name = "NotificationFrame"
+	NotificationFrame.Parent = ScreenGui
+	NotificationFrame.BackgroundColor3 = Color3.fromRGB(5, 5, 10)
+	NotificationFrame.BackgroundTransparency = 0.1
+	NotificationFrame.BorderSizePixel = 0
+	NotificationFrame.Position = UDim2.new(0, 10, 1, -220)
+	NotificationFrame.Size = UDim2.new(0, 280, 0, 200)
+	NotificationFrame.ZIndex = 1000
+
+	local NotifCorner = Instance.new("UICorner")
+	NotifCorner.CornerRadius = UDim.new(0, 8)
+	NotifCorner.Parent = NotificationFrame
+
+	local NotifTitle = Instance.new("TextLabel")
+	NotifTitle.Parent = NotificationFrame
+	NotifTitle.BackgroundTransparency = 1
+	NotifTitle.Position = UDim2.new(0, 10, 0, 5)
+	NotifTitle.Size = UDim2.new(1, -20, 0, 25)
+	NotifTitle.Font = Enum.Font.GothamBold
+	NotifTitle.Text = "📢 玩家动态"
+	NotifTitle.TextColor3 = Color3.fromRGB(180, 180, 255)
+	NotifTitle.TextSize = 14
+	NotifTitle.TextXAlignment = Enum.TextXAlignment.Left
+
+	local NotifList = Instance.new("ScrollingFrame")
+	NotifList.Name = "NotifList"
+	NotifList.Parent = NotificationFrame
+	NotifList.BackgroundColor3 = Color3.fromRGB(10, 10, 18)
+	NotifList.BackgroundTransparency = 0.3
+	NotifList.BorderSizePixel = 0
+	NotifList.Position = UDim2.new(0, 5, 0, 30)
+	NotifList.Size = UDim2.new(1, -10, 1, -35)
+	NotifList.CanvasSize = UDim2.new(0, 0, 0, 0)
+	NotifList.ScrollBarThickness = 4
+	NotifList.ScrollBarImageColor3 = Color3.fromRGB(180, 0, 255)
+
+	return {
+		ScreenGui = ScreenGui,
+		MainContainer = MainContainer,
+		CloseButton = CloseButton,
+		MenuButtons = LeftPanel:GetChildren(),
+		Pages = {Page1, Page2, Page3, Page4},
+		XValue = XValue,
+		YValue = YValue,
+		ZValue = ZValue,
+		CopyBtn = CopyBtn,
+		CoordInput = CoordInput,
+		TeleportBtn = TeleportBtn,
+		QuickTPList = QuickTPList,
+		PlayerList = PlayerList,
+		ToggleButtons = ToggleButtons,
+		SpeedSlider = SpeedSlider,
+		SpeedValue = SpeedValue,
+		NotifList = NotifList
+	}
+end
+
+-- ========== 全局变量 ==========
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local LocalPlayer = Players.LocalPlayer
+local NoclipEnabled = false
+local ESPEnabled = false
+local InstantInteractEnabled = false
+local SpeedEnabled = false
+local JumpEnabled = false
+local ESPObjects = {}
+local CurrentSpeed = 32
+
+-- ========== 预定义传送点 ==========
+local TeleportPoints = {
+	{name = "小区1", pos = Vector3.new(1511, 46, -942)},
+	{name = "小区2", pos = Vector3.new(1852, 46, -832)},
+	{name = "井盖售卖处垃圾", pos = Vector3.new(1236, 45, -1419)},
+	{name = "保安", pos = Vector3.new(673, 63, -1181)},
+	{name = "车店", pos = Vector3.new(180, 46, -756)},
+	{name = "广场", pos = Vector3.new(399, 46, -713)},
+	{name = "酒店2", pos = Vector3.new(533, -85, -815)},
+	{name = "酒店3", pos = Vector3.new(533, -85, -983)},
+	{name = "豪华酒店", pos = Vector3.new(537, -85, -1130)},
+	{name = "大酒店", pos = Vector3.new(763, 45, -512)},
+	{name = "小区旁黑市", pos = Vector3.new(1875, 45, -676)},
+	{name = "港口", pos = Vector3.new(2348, 45, -349)},
+	{name = "出生地", pos = Vector3.new(942.4, 45.9, -782.3)},
+	{name = "河南盾牌", pos = Vector3.new(1087.5, 44.7, -1552.2)},
+	{name = "工地", pos = Vector3.new(763, 45, -512)},
+}
+
+-- ========== 创建GUI ==========
+local GUI = CreateOptimizedUI()
+
+-- ========== 关闭功能 ==========
+GUI.CloseButton.MouseButton1Click:Connect(function()
+	-- 关闭所有功能
+	if ESPEnabled then
+		for player, _ in pairs(ESPObjects) do
+			RemoveESP(player)
+		end
+	end
+
+	-- 恢复默认速度
+	if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+		LocalPlayer.Character.Humanoid.WalkSpeed = 16
+	end
+
+	-- 删除GUI
+	GUI.ScreenGui:Destroy()
+end)
+
+-- ========== 页面切换功能 ==========
+for i, btn in ipairs(GUI.MenuButtons) do
+	if btn:IsA("TextButton") and btn.Name:find("MenuBtn") then
+		btn.MouseButton1Click:Connect(function()
+			for _, b in ipairs(GUI.MenuButtons) do
+				if b:IsA("TextButton") then
+					b.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+					b.BackgroundTransparency = 0.3
+				end
+			end
+
+			btn.BackgroundColor3 = Color3.fromRGB(100, 50, 200)
+			btn.BackgroundTransparency = 0.1
+
+			local index = btn:GetAttribute("Index")
+			for pageIdx, page in ipairs(GUI.Pages) do
+				page.Visible = (pageIdx == index)
+			end
+		end)
+	end
+end
+
+-- ========== 更新当前位置 ==========
+spawn(function()
+	while GUI.ScreenGui and GUI.ScreenGui.Parent do
+		local char = LocalPlayer.Character
+		if char and char:FindFirstChild("HumanoidRootPart") then
+			local pos = char.HumanoidRootPart.Position
+			GUI.XValue.Text = string.format("%.1f", pos.X)
+			GUI.YValue.Text = string.format("%.1f", pos.Y)
+			GUI.ZValue.Text = string.format("%.1f", pos.Z)
+		end
+		wait(0.1)
+	end
+end)
+
+-- ========== 复制坐标 ==========
+GUI.CopyBtn.MouseButton1Click:Connect(function()
+	local char = LocalPlayer.Character
+	if char and char:FindFirstChild("HumanoidRootPart") then
+		local pos = char.HumanoidRootPart.Position
+		setclipboard(string.format("%.1f, %.1f, %.1f", pos.X, pos.Y, pos.Z))
+		AddNotification(" 坐标已复制")
+	end
+end)
+
+-- ========== 传送功能 ==========
+GUI.TeleportBtn.MouseButton1Click:Connect(function()
+	local input = GUI.CoordInput.Text
+
+	local x, y, z = string.match(input, "([%-%d%.]+)[%s,]+([%-%d%.]+)[%s,]+([%-%d%.]+)")
+	if x and y and z then
+		local targetPos = Vector3.new(tonumber(x), tonumber(y), tonumber(z))
+		LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(targetPos)
+		AddNotification(string.format(" 传送到: %.1f, %.1f, %.1f", targetPos.X, targetPos.Y, targetPos.Z))
+	else
+		for _, player in ipairs(Players:GetPlayers()) do
+			if player.Name:lower() == input:lower() then
+				if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+					local pos = player.Character.HumanoidRootPart.Position
+					LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(pos + Vector3.new(0, 3, 2))
+					AddNotification(" 传送到: " .. player.Name)
+				end
+				break
+			end
+		end
+	end
+end)
+
+-- ========== 更新快速传送点 ==========
+local function UpdateQuickTPList()
+	for _, child in ipairs(GUI.QuickTPList:GetChildren()) do
+		if child:IsA("Frame") then
+			child:Destroy()
+		end
+	end
+
+	local yPos = 0
+
+	for i, point in ipairs(TeleportPoints) do
+		local PointFrame = Instance.new("Frame")
+		PointFrame.Parent = GUI.QuickTPList
+		PointFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+		PointFrame.BackgroundTransparency = 0.3
+		PointFrame.Position = UDim2.new(0, 5, 0, yPos)
+		PointFrame.Size = UDim2.new(1, -10, 0, 50)
+
+		local FrameCorner = Instance.new("UICorner")
+		FrameCorner.CornerRadius = UDim.new(0, 6)
+		FrameCorner.Parent = PointFrame
+
+		local NameLabel = Instance.new("TextLabel")
+		NameLabel.Parent = PointFrame
+		NameLabel.BackgroundTransparency = 1
+		NameLabel.Position = UDim2.new(0, 10, 0, 5)
+		NameLabel.Size = UDim2.new(0.6, 0, 0, 20)
+		NameLabel.Font = Enum.Font.GothamBold
+		NameLabel.Text = point.name
+		NameLabel.TextColor3 = Color3.fromRGB(200, 200, 255)
+		NameLabel.TextSize = 14
+		NameLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+		local CoordLabel = Instance.new("TextLabel")
+		CoordLabel.Parent = PointFrame
+		CoordLabel.BackgroundTransparency = 1
+		CoordLabel.Position = UDim2.new(0, 10, 0, 25)
+		CoordLabel.Size = UDim2.new(0.6, 0, 0, 15)
+		CoordLabel.Font = Enum.Font.Gotham
+		CoordLabel.Text = string.format("%.0f, %.0f, %.0f", point.pos.X, point.pos.Y, point.pos.Z)
+		CoordLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
+		CoordLabel.TextSize = 11
+
+		local TeleportBtn = Instance.new("TextButton")
+		TeleportBtn.Parent = PointFrame
+		TeleportBtn.BackgroundColor3 = Color3.fromRGB(100, 50, 200)
+		TeleportBtn.BackgroundTransparency = 0.2
+		TeleportBtn.Position = UDim2.new(0.7, 0, 0, 10)
+		TeleportBtn.Size = UDim2.new(0.25, 0, 0, 30)
+		TeleportBtn.Font = Enum.Font.GothamBold
+		TeleportBtn.Text = "传送"
+		TeleportBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+		TeleportBtn.TextSize = 12
+
+		local BtnCorner = Instance.new("UICorner")
+		BtnCorner.CornerRadius = UDim.new(0, 4)
+		BtnCorner.Parent = TeleportBtn
+
+		TeleportBtn.MouseButton1Click:Connect(function()
+			LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(point.pos)
+			AddNotification(" 传送到: " .. point.name)
+		end)
+
+		yPos = yPos + 55
+	end
+
+	GUI.QuickTPList.CanvasSize = UDim2.new(0, 0, 0, yPos)
+end
+
+-- ========== 更新玩家列表 ==========
+local function UpdatePlayerList()
+	for _, child in ipairs(GUI.PlayerList:GetChildren()) do
+		if child:IsA("Frame") then
+			child:Destroy()
+		end
+	end
+
+	local players = Players:GetPlayers()
+	local yPos = 0
+
+	for _, player in ipairs(players) do
+		if player ~= LocalPlayer then
+			local PlayerFrame = Instance.new("Frame")
+			PlayerFrame.Parent = GUI.PlayerList
+			PlayerFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+			PlayerFrame.BackgroundTransparency = 0.3
+			PlayerFrame.Position = UDim2.new(0, 5, 0, yPos)
+			PlayerFrame.Size = UDim2.new(1, -10, 0, 60)
+
+			local FrameCorner = Instance.new("UICorner")
+			FrameCorner.CornerRadius = UDim.new(0, 6)
+			FrameCorner.Parent = PlayerFrame
+
+			local NameLabel = Instance.new("TextLabel")
+			NameLabel.Parent = PlayerFrame
+			NameLabel.BackgroundTransparency = 1
+			NameLabel.Position = UDim2.new(0, 10, 0, 5)
+			NameLabel.Size = UDim2.new(0.6, 0, 0, 25)
+			NameLabel.Font = Enum.Font.GothamBold
+			NameLabel.Text = player.Name
+			NameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+			NameLabel.TextSize = 16
+			NameLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+			local TeleportBtn = Instance.new("TextButton")
+			TeleportBtn.Parent = PlayerFrame
+			TeleportBtn.BackgroundColor3 = Color3.fromRGB(100, 50, 200)
+			TeleportBtn.BackgroundTransparency = 0.2
+			TeleportBtn.Position = UDim2.new(0.7, 0, 0, 15)
+			TeleportBtn.Size = UDim2.new(0.25, 0, 0, 30)
+			TeleportBtn.Font = Enum.Font.GothamBold
+			TeleportBtn.Text = "传送"
+			TeleportBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+			TeleportBtn.TextSize = 12
+
+			local BtnCorner = Instance.new("UICorner")
+			BtnCorner.CornerRadius = UDim.new(0, 4)
+			BtnCorner.Parent = TeleportBtn
+
+			TeleportBtn.MouseButton1Click:Connect(function()
+				if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+					local pos = player.Character.HumanoidRootPart.Position
+					LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(pos + Vector3.new(0, 3, 2))
+					AddNotification(" 传送到: " .. player.Name)
+				end
+			end)
+
+			yPos = yPos + 65
+		end
+	end
+
+	GUI.PlayerList.CanvasSize = UDim2.new(0, 0, 0, yPos)
+end
+
+-- ========== 添加通知 ==========
+local function AddNotification(text)
+	local Notification = Instance.new("TextLabel")
+	Notification.Parent = GUI.NotifList
+	Notification.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+	Notification.BackgroundTransparency = 0.3
+	Notification.Size = UDim2.new(1, -10, 0, 25)
+	Notification.Font = Enum.Font.Gotham
+	Notification.Text = "• " .. text
+	Notification.TextColor3 = Color3.fromRGB(200, 200, 255)
+	Notification.TextSize = 12
+	Notification.TextXAlignment = Enum.TextXAlignment.Left
+
+	local NotifCorner = Instance.new("UICorner")
+	NotifCorner.CornerRadius = UDim.new(0, 4)
+	NotifCorner.Parent = Notification
+
+	local yPos = 0
+	for _, child in ipairs(GUI.NotifList:GetChildren()) do
+		if child:IsA("TextLabel") then
+			child.Position = UDim2.new(0, 5, 0, yPos)
+			yPos = yPos + 26
+		end
+	end
+
+	GUI.NotifList.CanvasSize = UDim2.new(0, 0, 0, yPos)
+
+	spawn(function()
+		wait(5)
+		Notification:Destroy()
+
+		local newYPos = 0
+		for _, child in ipairs(GUI.NotifList:GetChildren()) do
+			if child:IsA("TextLabel") then
+				child.Position = UDim2.new(0, 5, 0, newYPos)
+				newYPos = newYPos + 26
+			end
+		end
+		GUI.NotifList.CanvasSize = UDim2.new(0, 0, 0, newYPos)
+	end)
+end
+
+-- ========== 穿墙功能 ==========
+GUI.ToggleButtons[1].MouseButton1Click:Connect(function()
+	NoclipEnabled = not NoclipEnabled
+	if NoclipEnabled then
+		GUI.ToggleButtons[1].Text = "ON"
+		GUI.ToggleButtons[1].TextColor3 = Color3.fromRGB(100, 255, 100)
+		GUI.ToggleButtons[1].BackgroundColor3 = Color3.fromRGB(50, 150, 50)
+		AddNotification(" 穿墙模式已开启")
+	else
+		GUI.ToggleButtons[1].Text = "OFF"
+		GUI.ToggleButtons[1].TextColor3 = Color3.fromRGB(255, 100, 100)
+		GUI.ToggleButtons[1].BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+		AddNotification(" 穿墙模式已关闭")
+	end
+end)
+
+RunService.Stepped:Connect(function()
+	if NoclipEnabled and LocalPlayer.Character then
+		for _, part in ipairs(LocalPlayer.Character:GetDescendants()) do
+			if part:IsA("BasePart") then
+				part.CanCollide = false
+			end
+		end
+	end
+end)
+
+-- ========== 透视功能 ==========
+local function CreateESP(player)
+	if ESPObjects[player] then return end
+
+	local esp = {}
+
+	local nameBillboard = Instance.new("BillboardGui")
+	nameBillboard.Name = "ESP_Name"
+	nameBillboard.AlwaysOnTop = true
+	nameBillboard.Size = UDim2.new(0, 200, 0, 50)
+	nameBillboard.StudsOffset = Vector3.new(0, 3, 0)
+	nameBillboard.Adornee = player.Character and player.Character:FindFirstChild("Head")
+	nameBillboard.Parent = player.Character
+
+	local nameLabel = Instance.new("TextLabel")
+	nameLabel.Parent = nameBillboard
+	nameLabel.Size = UDim2.new(1, 0, 1, 0)
+	nameLabel.BackgroundTransparency = 1
+	nameLabel.Text = player.Name
+	nameLabel.TextColor3 = Color3.fromRGB(255, 50, 50)
+	nameLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+	nameLabel.TextStrokeTransparency = 0.3
+	nameLabel.Font = Enum.Font.GothamBold
+	nameLabel.TextSize = 16
+
+	local box = Instance.new("BoxHandleAdornment")
+	box.Name = "ESP_Box"
+	box.AlwaysOnTop = true
+	box.ZIndex = 10
+	box.Size = Vector3.new(4, 6, 4)
+	box.Adornee = player.Character
+	box.Color3 = Color3.fromRGB(255, 0, 0)
+	box.Transparency = 0.3
+	box.Parent = player.Character
+
+	esp.Name = nameBillboard
+	esp.Box = box
+	ESPObjects[player] = esp
+end
+
+local function RemoveESP(player)
+	if ESPObjects[player] then
+		if ESPObjects[player].Name then
+			ESPObjects[player].Name:Destroy()
+		end
+		if ESPObjects[player].Box then
+			ESPObjects[player].Box:Destroy()
+		end
+		ESPObjects[player] = nil
+	end
+end
+
+GUI.ToggleButtons[2].MouseButton1Click:Connect(function()
+	ESPEnabled = not ESPEnabled
+	if ESPEnabled then
+		GUI.ToggleButtons[2].Text = "ON"
+		GUI.ToggleButtons[2].TextColor3 = Color3.fromRGB(100, 255, 100)
+		GUI.ToggleButtons[2].BackgroundColor3 = Color3.fromRGB(50, 150, 50)
+		AddNotification(" 透视模式已开启")
+
+		for _, player in ipairs(Players:GetPlayers()) do
+			if player ~= LocalPlayer then
+				CreateESP(player)
+			end
+		end
+	else
+		GUI.ToggleButtons[2].Text = "OFF"
+		GUI.ToggleButtons[2].TextColor3 = Color3.fromRGB(255, 100, 100)
+		GUI.ToggleButtons[2].BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+		AddNotification(" 透视模式已关闭")
+
+		for player, _ in pairs(ESPObjects) do
+			RemoveESP(player)
+		end
+	end
+end)
+
+-- ========== 秒互动功能 (0.1秒) ==========
+GUI.ToggleButtons[3].MouseButton1Click:Connect(function()
+	InstantInteractEnabled = not InstantInteractEnabled
+
+	if InstantInteractEnabled then
+		GUI.ToggleButtons[3].Text = "ON"
+		GUI.ToggleButtons[3].TextColor3 = Color3.fromRGB(100, 255, 100)
+		GUI.ToggleButtons[3].BackgroundColor3 = Color3.fromRGB(50, 150, 50)
+		AddNotification(" 秒互动模式已开启 (0.1s)")
+
+		local oldNamecall
+		oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
+			local method = getnamecallmethod()
+			if method == "FireServer" or method == "InvokeServer" or method == "Click" then
+				return
+			end
+			return oldNamecall(self, ...)
+		end)
+
+		spawn(function()
+			while InstantInteractEnabled do
+				for _, v in ipairs(workspace:GetDescendants()) do
+					if v:IsA("ClickDetector") then
+						pcall(function()
+							v:Fire(LocalPlayer)
+						end)
+					end
+					if v:IsA("ProximityPrompt") then
+						pcall(function()
+							v.HoldDuration = 0
+						end)
+					end
+				end
+				wait(0.1)
+			end
+		end)
+	else
+		GUI.ToggleButtons[3].Text = "OFF"
+		GUI.ToggleButtons[3].TextColor3 = Color3.fromRGB(255, 100, 100)
+		GUI.ToggleButtons[3].BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+		AddNotification(" 秒互动模式已关闭")
+	end
+end)
+
+-- ========== 移动速度滑块 ==========
+GUI.ToggleButtons[4].MouseButton1Click:Connect(function()
+	SpeedEnabled = not SpeedEnabled
+
+	if SpeedEnabled then
+		GUI.ToggleButtons[4].Text = "ON"
+		GUI.ToggleButtons[4].TextColor3 = Color3.fromRGB(100, 255, 100)
+		GUI.ToggleButtons[4].BackgroundColor3 = Color3.fromRGB(50, 150, 50)
+		AddNotification(" 移动速度已开启 (" .. CurrentSpeed .. ")")
+
+		if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+			LocalPlayer.Character.Humanoid.WalkSpeed = CurrentSpeed
+		end
+	else
+		GUI.ToggleButtons[4].Text = "OFF"
+		GUI.ToggleButtons[4].TextColor3 = Color3.fromRGB(255, 100, 100)
+		GUI.ToggleButtons[4].BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+		AddNotification(" 移动速度已关闭")
+
+		if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+			LocalPlayer.Character.Humanoid.WalkSpeed = 16
+		end
+	end
+end)
+
+-- 滑块拖动功能
+if GUI.SpeedSlider then
+	local dragging = false
+
+	GUI.SpeedSlider.MouseButton1Down:Connect(function(input)
+		dragging = true
+	end)
+
+	UserInputService.InputEnded:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragging = false
+		end
+	end)
+
+	UserInputService.InputChanged:Connect(function(input)
+		if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+			local mousePos = UserInputService:GetMouseLocation()
+			local sliderPos = GUI.SpeedSlider.AbsolutePosition.X
+			local sliderSize = GUI.SpeedSlider.AbsoluteSize.X
+			local relativeX = math.clamp(mousePos.X - sliderPos, 0, sliderSize)
+			local percent = relativeX / sliderSize
+
+			GUI.SpeedSlider.Size = UDim2.new(percent, 0, 1, 0)
+			CurrentSpeed = math.floor(16 + (percent * 48)) -- 16 到 64 之间
+			GUI.SpeedValue.Text = tostring(CurrentSpeed)
+
+			if SpeedEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+				LocalPlayer.Character.Humanoid.WalkSpeed = CurrentSpeed
+			end
+		end
+	end)
+end
+
+-- ========== 无限跳跃 ==========
+GUI.ToggleButtons[5].MouseButton1Click:Connect(function()
+	JumpEnabled = not JumpEnabled
+
+	if JumpEnabled then
+		GUI.ToggleButtons[5].Text = "ON"
+		GUI.ToggleButtons[5].TextColor3 = Color3.fromRGB(100, 255, 100)
+		GUI.ToggleButtons[5].BackgroundColor3 = Color3.fromRGB(50, 150, 50)
+		AddNotification(" 无限跳跃已开启")
+
+		UserInputService.JumpRequest:Connect(function()
+			if JumpEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+				LocalPlayer.Character.Humanoid:ChangeState("Jumping")
+			end
+		end)
+	else
+		GUI.ToggleButtons[5].Text = "OFF"
+		GUI.ToggleButtons[5].TextColor3 = Color3.fromRGB(255, 100, 100)
+		GUI.ToggleButtons[5].BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+		AddNotification(" 无限跳跃已关闭")
+	end
+end)
+
+-- ========== 玩家加入/退出监控 ==========
+Players.PlayerAdded:Connect(function(player)
+	AddNotification("➕ " .. player.Name .. " 加入了游戏")
+
+	if ESPEnabled then
+		player.CharacterAdded:Connect(function()
+			wait(1)
+			CreateESP(player)
+		end)
+	end
+end)
+
+Players.PlayerRemoving:Connect(function(player)
+	AddNotification("➖ " .. player.Name .. " 退出了游戏")
+	RemoveESP(player)
+end)
+
+-- ========== 初始化 ==========
+UpdateQuickTPList()
+UpdatePlayerList()
+
+-- 定期更新玩家列表
+spawn(function()
+	while GUI.ScreenGui and GUI.ScreenGui.Parent do
+		wait(2)
+		UpdatePlayerList()
+	end
+end)
+
+-- 角色重生时保持速度
+LocalPlayer.CharacterAdded:Connect(function(char)
+	if SpeedEnabled then
+		char:WaitForChild("Humanoid").WalkSpeed = CurrentSpeed
+	end
+end)
+
+-- 拖动主窗口
+local dragging = false
+local dragInput
+local dragStart
+local startPos
+
+GUI.MainContainer.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		dragStart = input.Position
+		startPos = GUI.MainContainer.Position
+	end
+end)
+
+GUI.MainContainer.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = false
+	end
+end)
+
+GUI.MainContainer.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement then
+		dragInput = input
+	end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+	if input == dragInput and dragging then
+		local delta = input.Position - dragStart
+		GUI.MainContainer.Position = UDim2.new(
+			startPos.X.Scale,
+			startPos.X.Offset + delta.X,
+			startPos.Y.Scale,
+			startPos.Y.Offset + delta.Y
+		)
+	end
+end)
+
+AddNotification(" 当前在线: " .. #Players:GetPlayers() .. " 人")
+
+print(" 暗黑传送系统 v3.5 已加载")
+print("新增功能: 玩家提示 | 速度调节 | 即时互动(0.1s) | 关闭按钮")
