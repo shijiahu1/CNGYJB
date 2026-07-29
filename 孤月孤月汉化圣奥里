@@ -1,10 +1,4 @@
----------------------------------
---  中文翻译表（仅需在此追加）
----------------------------------
 local Translations = {
-   
-
--- 侧边栏与通用
 ["VxSans v1.1.1"] = "VxSans v1孤月汉化",
 ["VEHICLE"] = "载具",
 ["TOOLS"] = "工具",
@@ -174,7 +168,6 @@ local Translations = {
 ["Hotbar Slot"] = "快捷栏位",
 ["Stays on your attacker until they're down or lost. The timer is how long it keeps trying after the last shot. Won't override a target you locked yourself."] = "持续锁定攻击者直到其倒下或丢失。计时器是最后一枪后继续尝试的时间。不会覆盖您自行锁定的目标。",
 ["WHITELIST"] = "白名单",
-["Whitelisted players are ignored by the aim assist. Toggle them below."] = "白名单内的玩家将被瞄准辅助忽略。
 ["Whitelisted players are ignored by the aim assist. Toggle them below."] = "白名单内的玩家将被瞄准辅助忽略。在下方切换开关。",
 ["ZJNBCLS"] = "ZJNBCLS",
 ["ieueijsjsks"] = "ieueijsjsks",
@@ -377,12 +370,15 @@ local function setupTranslationEngine()
     -- 额外：当 PlayerGui 稍后加载时，也可监听 Player 的 ChildAdded
     if player then
         player.ChildAdded:Connect(function(child)
-          watchForNewChildren(child)
+            if child.Name == "PlayerGui" then
+                task.wait(0.1)
+                scanDescendants(child)
+                watchForNewChildren(child)
             end
         end)
     end
 
-    -- 可选：对部分动态生成的 ScreenGui 做额外处理（如 VxSans 自己的 GUI）
+-- 可选：对部分动态生成的 ScreenGui 做额外处理（如 VxSans 自己的 GUI）
     -- 可扩展为监听 CoreGui 下新 ScreenGui
 end
 
