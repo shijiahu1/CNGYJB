@@ -1,0 +1,651 @@
+local notif = loadstring(game:HttpGet("https://raw.githubusercontent.com/insanedude59/notiflib/main/main"))()
+
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local HttpService = game:GetService("HttpService")
+
+local CONFIG = {
+    KEY_DURATION = 24 * 60 * 60,
+    KEY_FILE = "圣奥里脚本卡密.txt",
+    WHITELIST_FILE = "圣奥里白名单.txt",
+    VALID_KEY = "GYNQMPZ697",
+    SCRIPT_URL = "https://raw.githubusercontent.com/shijiahu1/CNGYJB/refs/heads/main/%E5%AD%A4%E6%9C%88%E5%AD%A4%E6%9C%88%E6%B1%89%E5%8C%96%E5%9C%A3%E5%A5%A5%E9%87%8C",
+    QQ_CONTACT = "1332966371",
+    GUI_TITLE = "圣奥里脚本",
+    WHITELIST_NAMES = {
+        ["shijiahu2"] = true,
+        ["7777ssw"] = true,
+        ["管理员"] = true,
+    }
+}
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+local currentScreenGui = nil
+local currentMainFrame = nil
+local persistentGui = nil
+local toggleButton = nil
+local originalPosition = UDim2.new(0.5, -170, 0.5, -95)
+local isVerified = false
+local playerName = player.Name
+
+local function sendNotification(title, message, duration)
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = title or CONFIG.GUI_TITLE,
+        Text = message,
+        Duration = duration or 3
+    })
+end
+
+local function copyToClipboard(text)
+    setclipboard(text)
+    sendNotification("复制成功", text, 2)
+end
+
+local function saveData(fileName, data)
+    local success, result = pcall(function()
+        local jsonData = HttpService:JSONEncode(data)
+        writefile(fileName, jsonData)
+        return true
+    end)
+    return success
+end
+
+local function loadData(fileName)
+    if not isfile(fileName) then return nil end
+    local success, result = pcall(function()
+        local jsonData = readfile(fileName)
+        return HttpService:JSONDecode(jsonData)
+    end)
+    if success then
+        return result
+    end
+    return nil
+end
+
+local function isWhitelisted(name)
+    if CONFIG.WHITELIST_NAMES[name] then
+        return true
+    end
+    local whitelistData = loadData(CONFIG.WHITELIST_FILE)
+    if whitelistData and whitelistData[name] then
+        return true
+    end
+    return false
+end
+
+local function addToWhitelist(name)
+    local whitelistData = loadData(CONFIG.WHITELIST_FILE) or {}
+    whitelistData[name] = {
+        added = os.time(),
+        expires = os.time() + CONFIG.KEY_DURATION * 7
+    }
+    return saveData(CONFIG.WHITELIST_FILE, whitelistData)
+end
+
+local KeySystem = {
+    _keyData = nil,
+}
+
+function KeySystem:saveKey(key)
+    local keyData = {
+        key = key,
+        timestamp = os.time(),
+        expires = os.time() + CONFIG.KEY_DURATION,
+        gameId = game.PlaceId,
+        playerName = playerName
+    }
+    if saveData(CONFIG.KEY_FILE, keyData) then
+        self._keyData = keyData
+        local expirationDate = os.date("%m/%d/%Y at %I:%M %p", keyData.expires)
+        sendNotification("卡密已保存", "到期时间：" .. expirationDate)
+        return true
+    end
+    return false
+end
+
+function KeySystem:loadSavedKey()
+    local keyData = loadData(CONFIG.KEY_FILE)
+    if not keyData then return nil end
+    local currentTime = os.time()
+    if currentTime >= keyData.expires then
+        delfile(CONFIG.KEY_FILE)
+        return nil
+    end
+    if keyData.gameId ~= game.PlaceId then
+        sendNotification("卡密错误", "卡密来自不同的游戏\n请重新获取", 5)
+        delfile(CONFIG.KEY_FILE)
+        return nil
+    end
+    if keyData.playerName ~= playerName then
+        sendNotification("卡密错误", "此卡密已被其他玩家使用", 5)
+        delfile(CONFIG.KEY_FILE)
+        return nil
+    end
+    self._keyData = keyData
+    return keyData.key
+end
+
+function KeySystem:verifyKey(key)
+    return key == CONFIG.VALID_KEY
+end
+
+local ScriptLoader = {
+    _isLoading = false,
+    _isLoaded = false,
+}
+
+function ScriptLoader:load()
+    if self._isLoading or self._isLoaded then return end
+    self._isLoading = true
+    sendNotification("脚本加载", "圣奥里脚本正在加载\n请等待5-10秒...", 3)
+    spawn(function()
+        wait(1)
+        local success, error = pcall(function()
+            loadstring(game:HttpGet(CONFIG.SCRIPT_URL))()
+        end)
+        self._isLoading = false
+        if success then
+            self._isLoaded = true
+            sendNotification("加载成功", "圣奥里脚本已加载", 3)
+        else
+            sendNotification("加载失败", "错误：" .. tostring(error), 5)
+            warn("Error loading main script:", error)
+        end
+    end)
+end
+
+local UIAnimations = {}
+
+function UIAnimations:createButtonEffect(button, hoverColor, clickColor)
+    local originalColor = button.BackgroundColor3
+    button.MouseEnter:Connect(function()
+        local tween = TweenService:Create(button, TweenInfo.new(0.2), {BackgroundColor3 = hoverColor})
+        tween:Play()
+    end)
+    button.MouseLeave:Connect(function()
+        local tween = TweenService:Create(button, TweenInfo.new(0.2), {BackgroundColor3 = originalColor})
+        tween:Play()
+    end)
+    button.MouseButton1Down:Connect(function()
+        local tween = TweenService:Create(button, TweenInfo.new(0.1), {BackgroundColor3 = clickColor})
+        tween:Play()
+    end)
+    button.MouseButton1Up:Connect(function()
+        local tween = TweenService:Create(button, TweenInfo.new(0.1), {BackgroundColor3 = hoverColor})
+        tween:Play()
+    end)
+end
+
+function UIAnimations:smoothEntrance(frame, targetPosition)
+    local finalPosition = targetPosition or originalPosition
+    frame.Position = UDim2.new(0.5, -170, 1.2, 0)
+    frame.Size = UDim2.new(0, 60, 0, 40)
+    frame.BackgroundTransparency = 0.8
+    local function setTransparent(parent)
+        for _, child in pairs(parent:GetDescendants()) do
+            if child:IsA("TextLabel") or child:IsA("TextButton") or child:IsA("TextBox") then
+                child.TextTransparency = 1
+            elseif child:IsA("Frame") and not child:IsA("UICorner") and not child:IsA("UIStroke") then
+                child.BackgroundTransparency = 1
+            elseif child:IsA("UIStroke") then
+                child.Transparency = 1
+            end
+        end
+    end
+    setTransparent(frame)
+    local mainTween = TweenService:Create(frame, 
+        TweenInfo.new(0.8, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), 
+        {
+            Position = finalPosition,
+            Size = UDim2.new(0, 340, 0, 190),
+            BackgroundTransparency = 0
+        }
+    )
+    mainTween:Play()
+    spawn(function()
+        wait(0.4)
+        local function fadeInElements(parent)
+            for _, child in pairs(parent:GetDescendants()) do
+                if child:IsA("TextLabel") or child:IsA("TextButton") or child:IsA("TextBox") then
+                    TweenService:Create(child, 
+                        TweenInfo.new(0.6, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), 
+                        {TextTransparency = 0}
+                    ):Play()
+                elseif child:IsA("Frame") and not child:IsA("UICorner") and not child:IsA("UIStroke") then
+                    TweenService:Create(child, 
+                        TweenInfo.new(0.6, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), 
+                        {BackgroundTransparency = 0}
+                    ):Play()
+                elseif child:IsA("UIStroke") then
+                    TweenService:Create(child, 
+                        TweenInfo.new(0.6, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), 
+                        {Transparency = 0}
+                    ):Play()
+                end
+            end
+        end
+        fadeInElements(frame)
+    end)
+end
+
+function UIAnimations:minimize(frame, toggleBtn, callback)
+    if not frame then return end
+    originalPosition = frame.Position
+    for _, child in pairs(frame:GetDescendants()) do
+        if child:IsA("TextButton") or child:IsA("TextBox") then
+            child.Active = false
+        end
+    end
+    local function fadeOutElements(parent)
+        for _, child in pairs(parent:GetDescendants()) do
+            if child:IsA("TextLabel") or child:IsA("TextButton") or child:IsA("TextBox") then
+                TweenService:Create(child, 
+                    TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.In), 
+                    {TextTransparency = 1}
+                ):Play()
+            elseif child:IsA("Frame") and not child:IsA("UICorner") and not child:IsA("UIStroke") then
+                TweenService:Create(child, 
+                    TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.In), 
+                    {BackgroundTransparency = 1}
+                ):Play()
+            elseif child:IsA("UIStroke") then
+                TweenService:Create(child, 
+                    TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.In), 
+                    {Transparency = 1}
+                ):Play()
+            end
+        end
+    end
+    fadeOutElements(frame)
+    spawn(function()
+        wait(0.2)
+        local mainTween = TweenService:Create(frame, 
+            TweenInfo.new(0.6, Enum.EasingStyle.Quart, Enum.EasingDirection.In), 
+            {
+                Position = UDim2.new(0.5, -170, 1.2, 0),
+                Size = UDim2.new(0, 60, 0, 40),
+                BackgroundTransparency = 1
+            }
+        )
+        mainTween:Play()
+        mainTween.Completed:Connect(function()
+            currentScreenGui.Enabled = false
+            toggleBtn.Visible = true
+            toggleBtn.Position = UDim2.new(0, -70, 0.5, -15)
+            local slideInTween = TweenService:Create(toggleBtn, 
+                TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), 
+                {Position = UDim2.new(0, 10, 0.5, -15)}
+            )
+            slideInTween:Play()
+            if callback then callback() end
+        end)
+    end)
+end
+
+function UIAnimations:show(frame)
+    if not frame then return end
+    currentScreenGui.Enabled = true
+    frame.BackgroundTransparency = 0
+    local function resetElements(parent)
+        for _, child in pairs(parent:GetDescendants()) do
+            if child:IsA("TextLabel") or child:IsA("TextButton") or child:IsA("TextBox") then
+                child.TextTransparency = 0
+                if child:IsA("TextButton") or child:IsA("TextBox") then
+                    child.Active = true
+                end
+                if child:IsA("TextBox") then
+                    child.Selectable = true
+                end
+            elseif child:IsA("Frame") and not child:IsA("UICorner") and not child:IsA("UIStroke") then
+                child.BackgroundTransparency = 0
+            elseif child:IsA("UIStroke") then
+                child.Transparency = 0
+            end
+        end
+    end
+    resetElements(frame)
+    self:smoothEntrance(frame, originalPosition)
+end
+
+function createKeySystemGUI()
+    currentScreenGui = Instance.new("ScreenGui")
+    currentScreenGui.Name = "AxsKeySystem"
+    currentScreenGui.Parent = playerGui
+    currentScreenGui.ResetOnSpawn = false
+    currentScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+    currentMainFrame = Instance.new("Frame")
+    currentMainFrame.Name = "MainFrame"
+    currentMainFrame.Parent = currentScreenGui
+    currentMainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 35)
+    currentMainFrame.BorderSizePixel = 0
+    currentMainFrame.Position = UDim2.new(0.5, -170, 0.5, -95)
+    currentMainFrame.Size = UDim2.new(0, 340, 0, 190)
+    currentMainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 12)
+    corner.Parent = currentMainFrame
+
+    local headerFrame = Instance.new("Frame")
+    headerFrame.Name = "HeaderFrame"
+    headerFrame.Parent = currentMainFrame
+    headerFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 40)
+    headerFrame.BorderSizePixel = 0
+    headerFrame.Position = UDim2.new(0, 0, 0, 0)
+    headerFrame.Size = UDim2.new(1, 0, 0, 50)
+
+    local headerCorner = Instance.new("UICorner")
+    headerCorner.CornerRadius = UDim.new(0, 12)
+    headerCorner.Parent = headerFrame
+
+    local headerBottom = Instance.new("Frame")
+    headerBottom.Name = "HeaderBottom"
+    headerBottom.Parent = headerFrame
+    headerBottom.BackgroundColor3 = Color3.fromRGB(25, 25, 40)
+    headerBottom.BorderSizePixel = 0
+    headerBottom.Position = UDim2.new(0, 0, 0.7, 0)
+    headerBottom.Size = UDim2.new(1, 0, 0.3, 0)
+
+    local titleLabel = Instance.new("TextLabel")
+    titleLabel.Name = "TitleLabel"
+    titleLabel.Parent = headerFrame
+    titleLabel.BackgroundTransparency = 1
+    titleLabel.Position = UDim2.new(0, 20, 0, 8)
+    titleLabel.Size = UDim2.new(0.6, 0, 0, 32)
+    titleLabel.Font = Enum.Font.Cartoon
+    titleLabel.Text = " 卡密系统"
+    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    titleLabel.TextSize = 20
+    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    titleLabel.TextYAlignment = Enum.TextYAlignment.Center
+
+    local titleGradient = Instance.new("UIGradient")
+    titleGradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0.0, Color3.fromRGB(150, 180, 255)),
+        ColorSequenceKeypoint.new(1.0, Color3.fromRGB(88, 101, 242))
+    }
+    titleGradient.Rotation = 90
+    titleGradient.Parent = titleLabel
+
+    local whitelistStatus = Instance.new("TextLabel")
+    whitelistStatus.Name = "WhitelistStatus"
+    whitelistStatus.Parent = headerFrame
+    whitelistStatus.BackgroundTransparency = 1
+    whitelistStatus.Position = UDim2.new(0.6, 0, 0, 8)
+    whitelistStatus.Size = UDim2.new(0.35, 0, 0, 32)
+    whitelistStatus.Font = Enum.Font.Code
+    whitelistStatus.Text = ""
+    whitelistStatus.TextColor3 = Color3.fromRGB(0, 255, 0)
+    whitelistStatus.TextSize = 12
+    whitelistStatus.TextXAlignment = Enum.TextXAlignment.Right
+    whitelistStatus.TextYAlignment = Enum.TextYAlignment.Center
+
+    local discordButton = Instance.new("TextButton")
+    discordButton.Name = "DiscordButton"
+    discordButton.Parent = headerFrame
+    discordButton.BackgroundTransparency = 1
+    discordButton.Position = UDim2.new(1, -95, 0, 15)
+    discordButton.Size = UDim2.new(0, 65, 0, 20)
+    discordButton.Font = Enum.Font.Code
+    discordButton.Text = "获取卡密"
+    discordButton.TextColor3 = Color3.fromRGB(150, 255, 180)
+    discordButton.TextSize = 12
+
+    local minimizeButton = Instance.new("TextButton")
+    minimizeButton.Name = "MinimizeButton"
+    minimizeButton.Parent = headerFrame
+    minimizeButton.BackgroundTransparency = 1
+    minimizeButton.Position = UDim2.new(1, -25, 0, 15)
+    minimizeButton.Size = UDim2.new(0, 15, 0, 15)
+    minimizeButton.Font = Enum.Font.GothamBold
+    minimizeButton.Text = "x"
+    minimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    minimizeButton.TextSize = 18
+
+    local separatorLine = Instance.new("Frame")
+    separatorLine.Name = "SeparatorLine"
+    separatorLine.Parent = currentMainFrame
+    separatorLine.BackgroundColor3 = Color3.fromRGB(60, 60, 75)
+    separatorLine.BorderSizePixel = 0
+    separatorLine.Position = UDim2.new(0, 0, 0, 50)
+    separatorLine.Size = UDim2.new(1, 0, 0, 1)
+
+    local statusLabel = Instance.new("TextLabel")
+    statusLabel.Name = "StatusLabel"
+    statusLabel.Parent = currentMainFrame
+    statusLabel.BackgroundTransparency = 1
+    statusLabel.Position = UDim2.new(0, 20, 0, 60)
+    statusLabel.Size = UDim2.new(1, -40, 0, 20)
+    statusLabel.Font = Enum.Font.Gotham
+    statusLabel.Text = "等待验证..."
+    statusLabel.TextColor3 = Color3.fromRGB(255, 165, 0)
+    statusLabel.TextSize = 12
+    statusLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+    local inputFrame = Instance.new("Frame")
+    inputFrame.Name = "InputFrame"
+    inputFrame.Parent = currentMainFrame
+    inputFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 50)
+    inputFrame.BorderSizePixel = 0
+    inputFrame.Position = UDim2.new(0, 20, 0, 90)
+    inputFrame.Size = UDim2.new(1, -40, 0, 40)
+
+    local inputCorner = Instance.new("UICorner")
+    inputCorner.CornerRadius = UDim.new(0, 10)
+    inputCorner.Parent = inputFrame
+
+    local inputStroke = Instance.new("UIStroke")
+    inputStroke.Color = Color3.fromRGB(45, 45, 65)
+    inputStroke.Thickness = 1
+    inputStroke.Parent = inputFrame
+
+    local keyInput = Instance.new("TextBox")
+    keyInput.Name = "KeyInput"
+    keyInput.Parent = inputFrame
+    keyInput.BackgroundTransparency = 1
+    keyInput.Position = UDim2.new(0, 15, 0, 0)
+    keyInput.Size = UDim2.new(1, -30, 1, 0)
+    keyInput.Font = Enum.Font.Code
+    keyInput.PlaceholderText = "在此处输入卡密"
+    keyInput.PlaceholderColor3 = Color3.fromRGB(120, 120, 140)
+    keyInput.Text = ""
+    keyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+    keyInput.TextSize = 14
+    keyInput.TextXAlignment = Enum.TextXAlignment.Left
+    keyInput.ClearTextOnFocus = false
+    keyInput.TextEditable = true
+    keyInput.Active = true
+    keyInput.Selectable = true
+    keyInput.MultiLine = false
+
+    local getKeyButton = Instance.new("TextButton")
+    getKeyButton.Name = "GetKeyButton"
+    getKeyButton.Parent = currentMainFrame
+    getKeyButton.BackgroundColor3 = Color3.fromRGB(108, 99, 255)
+    getKeyButton.BorderSizePixel = 0
+    getKeyButton.Position = UDim2.new(0, 20, 0, 145)
+    getKeyButton.Size = UDim2.new(0.48, -10, 0, 30)
+    getKeyButton.Font = Enum.Font.Cartoon
+    getKeyButton.Text = "获取卡密"
+    getKeyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    getKeyButton.TextSize = 14
+
+    local getKeyCorner = Instance.new("UICorner")
+    getKeyCorner.CornerRadius = UDim.new(0, 10)
+    getKeyCorner.Parent = getKeyButton
+
+    local verifyButton = Instance.new("TextButton")
+    verifyButton.Name = "VerifyButton"
+    verifyButton.Parent = currentMainFrame
+    verifyButton.BackgroundColor3 = Color3.fromRGB(75, 75, 90)
+    verifyButton.BorderSizePixel = 0
+    verifyButton.Position = UDim2.new(0.52, 10, 0, 145)
+    verifyButton.Size = UDim2.new(0.48, -30, 0, 30)
+    verifyButton.Font = Enum.Font.Cartoon
+    verifyButton.Text = "验证卡密"
+    verifyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    verifyButton.TextSize = 14
+
+    local verifyCorner = Instance.new("UICorner")
+    verifyCorner.CornerRadius = UDim.new(0, 10)
+    verifyCorner.Parent = verifyButton
+
+    UIAnimations:createButtonEffect(getKeyButton, Color3.fromRGB(118, 109, 255), Color3.fromRGB(98, 89, 235))
+    UIAnimations:createButtonEffect(verifyButton, Color3.fromRGB(85, 85, 100), Color3.fromRGB(65, 65, 80))
+
+    minimizeButton.MouseButton1Click:Connect(function()
+        UIAnimations:minimize(currentMainFrame, toggleButton)
+    end)
+
+    discordButton.MouseButton1Click:Connect(function()
+        copyToClipboard("QQ:" .. CONFIG.QQ_CONTACT)
+        statusLabel.Text = "QQ已复制！"
+        statusLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+    end)
+
+    getKeyButton.MouseButton1Click:Connect(function()
+        copyToClipboard("QQ:" .. CONFIG.QQ_CONTACT)
+        statusLabel.Text = "QQ已复制，请联系获取卡密"
+        statusLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+    end)
+
+    verifyButton.MouseButton1Click:Connect(function()
+        local enteredKey = keyInput.Text
+        if enteredKey == "" then
+            statusLabel.Text = "请先输入卡密"
+            statusLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+            return
+        end
+        if KeySystem:verifyKey(enteredKey) then
+            if KeySystem:saveKey(enteredKey) then
+                addToWhitelist(playerName)
+                statusLabel.Text = "✓ 验证成功，已加入白名单"
+                statusLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+                whitelistStatus.Text = "✓ 已认证"
+                isVerified = true
+                wait(1)
+                UIAnimations:minimize(currentMainFrame, toggleButton, function()
+                    ScriptLoader:load()
+                end)
+            else
+                statusLabel.Text = "保存卡密失败"
+                statusLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+            end
+        else
+            statusLabel.Text = "✗ 卡密错误"
+            statusLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+            keyInput.Text = ""
+        end
+    end)
+
+    keyInput.FocusLost:Connect(function(enterPressed)
+        if enterPressed then
+            verifyButton.MouseButton1Click:Fire()
+        end
+    end)
+
+    local dragToggle = nil
+    local dragSpeed = 0.25
+    local dragStart = nil
+    local startPos = nil
+
+    local function updateInput(input)
+        local delta = input.Position - dragStart
+        local position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        game:GetService('TweenService'):Create(currentMainFrame, TweenInfo.new(dragSpeed), {Position = position}):Play()
+    end
+
+    currentMainFrame.InputBegan:Connect(function(input)
+        if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
+            dragToggle = true
+            dragStart = input.Position
+            startPos = currentMainFrame.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragToggle = false
+                end
+            end)
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            if dragToggle then
+                updateInput(input)
+            end
+        end
+    end)
+
+    if isWhitelisted(playerName) then
+        whitelistStatus.Text = "✓ 已认证"
+        whitelistStatus.TextColor3 = Color3.fromRGB(0, 255, 0)
+        statusLabel.Text = "白名单用户，自动验证"
+        statusLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+        isVerified = true
+        wait(0.5)
+        UIAnimations:minimize(currentMainFrame, toggleButton, function()
+            ScriptLoader:load()
+        end)
+    else
+        whitelistStatus.Text = "未认证"
+        whitelistStatus.TextColor3 = Color3.fromRGB(255, 100, 100)
+    end
+
+    UIAnimations:smoothEntrance(currentMainFrame, originalPosition)
+end
+
+function initializePersistentGUI()
+    persistentGui = Instance.new("ScreenGui")
+    persistentGui.Name = "NEOXToggleSystem"
+    persistentGui.Parent = playerGui
+    persistentGui.ResetOnSpawn = false
+    persistentGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+    toggleButton = Instance.new("TextButton")
+    toggleButton.Name = "ToggleButton"
+    toggleButton.Parent = persistentGui
+    toggleButton.BackgroundColor3 = Color3.fromRGB(20, 20, 35)
+    toggleButton.BorderSizePixel = 0
+    toggleButton.Position = UDim2.new(0, 10, 0.5, -15)
+    toggleButton.Size = UDim2.new(0, 60, 0, 30)
+    toggleButton.Font = Enum.Font.Code
+    toggleButton.Text = "打开/关闭"
+    toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    toggleButton.TextSize = 12
+    toggleButton.Visible = false
+
+    local toggleCorner = Instance.new("UICorner")
+    toggleCorner.CornerRadius = UDim.new(0, 8)
+    toggleCorner.Parent = toggleButton
+
+    UIAnimations:createButtonEffect(toggleButton, Color3.fromRGB(30, 30, 45), Color3.fromRGB(15, 15, 25))
+
+    toggleButton.MouseButton1Click:Connect(function()
+        local slideOutTween = TweenService:Create(toggleButton, 
+            TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.In), 
+            {Position = UDim2.new(0, -70, 0.5, -15)}
+        )
+        slideOutTween:Play()
+        slideOutTween.Completed:Connect(function()
+            toggleButton.Visible = false
+            UIAnimations:show(currentMainFrame)
+        end)
+    end)
+end
+
+local function initialize()
+    local savedKey = KeySystem:loadSavedKey()
+    if savedKey and KeySystem:verifyKey(savedKey) then
+        addToWhitelist(playerName)
+        isVerified = true
+        ScriptLoader:load()
+        return
+    end
+    initializePersistentGUI()
+    createKeySystemGUI()
+end
+
+initialize()
