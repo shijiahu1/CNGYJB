@@ -1,0 +1,163 @@
+local Translations = {
+   ["Walk Speed"] = "行走速度",
+   ["Speed"] = "速度",
+   ["Money Aura"] = "金钱光环",
+   ["Auto-Collect Money"] = "自动收集金钱",
+   ["Aura Reach"] = "光环范围",
+   ["Dead Move"] = "死亡移动",
+   ["Move while dead"] = "死亡时移动",
+   ["Jump"] = "跳跃",
+   ["Jump Height"] = "跳跃高度",
+   ["Infinite Jump"] = "无限跳跃",
+   ["Misc"] = "杂项",
+   ["Walk Fling"] = "行走甩飞",
+   ["Instant Interact"] = "瞬间交互",
+   ["Player ESP"] = "玩家透视",
+   ["Enable ESP"] = "启用透视",
+   ["ESP Boxes"] = "透视方框",
+   ["ESP Names"] = "透视名字",
+   ["ESP Health"] = "透视血量",
+   ["ESP Team"] = "透视队伍",
+   ["Spawn"] = "重生点",
+   ["Main"] = "主页",
+   ["Fly"] = "飞行",
+   ["Visuals"] = "视觉",
+   ["Teleports"] = "传送",
+   ["Buy"] = "购买",
+   ["Vehicle Mods"] = "载具修改",
+   ["Aimbot"] = "自瞄",
+   ["Gun Mods"] = "枪械修改",
+   ["Mini Golf"] = "迷你高尔夫",
+   ["Settings"] = "设置",
+   ["Vehicle Config Modifier"] = "载具配置修改",
+   ["Max Speed"] = "最大速度",
+   ["Acceleration"] = "加速度",
+   ["Brake Power"] = "刹车力度",
+   ["Apply Mods"] = "应用修改",
+   ["Car Fling"] = "车辆甩飞",
+   ["Car Fly"] = "车辆飞行",
+   ["Car Fly Speed"] = "车辆飞行速度",
+   ["Vehicle Noclip"] = "载具穿墙",
+   ["remove crash colisons"] = "移除碰撞",
+   ["FOV Aimbot"] = "FOV自瞄",
+   ["Enable Aimbot"] = "启用自瞄",
+   ["FOV Size"] = "FOV大小",
+   ["Show FOV Circle"] = "显示FOV圆圈",
+   ["Target Part"] = "目标部位",
+   ["Head"] = "头部",
+   ["Lock Key"] = "锁定键",
+   ["Right Click"] = "右键",
+   ["Gun config"] = "枪械配置",
+   ["Fire Rate (RPM)"] = "射速(RPM)",
+   ["Recoil Multiplier"] = "后坐力倍率",
+   ["Ammo & Firing"] = "弹药与射击",
+   ["Auto Fill Ammo (Free)"] = "自动填充弹药(免费)",
+   ["yeah"] = "是的",
+   ["Shoot Mode"] = "射击模式",
+   ["Semi-Auto"] = "半自动",
+   ["Apply Gun Mods"] = "应用枪械修改",
+   ["enable auto mini golf"] = "启用自动迷你高尔夫",
+   ["Bet ammount"] = "下注金额",
+   ["tp ball to flag"] = "传送球到旗杆",
+   ["shoot (idk if works)"] = "射击(不知道是否有效)",
+   ["Ball fly"] = "球飞行",
+   ["Ball Fly"] = "球飞行",
+   ["Ball Fly Speed"] = "球飞行速度",
+   ["Toggle Menu"] = "切换菜单",
+   ["LeftControl"] = "左Ctrl",
+["SanX V0.2.1 Default"] = "孤月NB",
+["Figurehead_1"] = "GYSTUDIO",
+   ["Join our discord"] = "加入我们的Discord",
+}
+
+local function translateText(text)
+    if not text or type(text) ~= "string" then return text end
+    if Translations[text] then return Translations[text] end
+    for en, cn in pairs(Translations) do
+        if text:find(en, 1, true) then
+            return text:gsub(en, cn)
+        end
+    end
+    return text
+end
+
+local function setupTranslationEngine()
+    local success, err = pcall(function()
+        local oldIndex = getrawmetatable(game).__newindex
+        setreadonly(getrawmetatable(game), false)
+        getrawmetatable(game).__newindex = newcclosure(function(t, k, v)
+            if (t:IsA("TextLabel") or t:IsA("TextButton") or t:IsA("TextBox")) and k == "Text" then
+                v = translateText(tostring(v))
+            end
+            return oldIndex(t, k, v)
+        end)
+        setreadonly(getrawmetatable(game), true)
+    end)
+
+    if not success then
+        warn("元表劫持失败:", err)
+        local translated = {}
+
+        local function scanAndTranslate()
+            for _, gui in ipairs(game:GetService("CoreGui"):GetDescendants()) do
+                if (gui:IsA("TextLabel") or gui:IsA("TextButton") or gui:IsA("TextBox")) and not translated[gui] then
+                    pcall(function()
+                        local text = gui.Text
+                        if text and text ~= "" then
+                            local new = translateText(text)
+                            if new ~= text then gui.Text = new; translated[gui] = true end
+                        end
+                    end)
+                end
+            end
+            local player = game:GetService("Players").LocalPlayer
+            if player and player:FindFirstChild("PlayerGui") then
+                for _, gui in ipairs(player.PlayerGui:GetDescendants()) do
+                    if (gui:IsA("TextLabel") or gui:IsA("TextButton") or gui:IsA("TextBox")) and not translated[gui] then
+                        pcall(function()
+                            local text = gui.Text
+                            if text and text ~= "" then
+                                local new = translateText(text)
+                                if new ~= text then gui.Text = new; translated[gui] = true end
+                            end
+                        end)
+                    end
+                end
+            end
+        end
+
+        local function setupListener(parent)
+            parent.DescendantAdded:Connect(function(desc)
+                if desc:IsA("TextLabel") or desc:IsA("TextButton") or desc:IsA("TextBox") then
+                    task.wait(.1)
+                    pcall(function()
+                        local text = desc.Text
+                        if text and text ~= "" then
+                            local new = translateText(text)
+                            if new ~= text then desc.Text = new end
+                        end
+                    end)
+                end
+            end)
+        end
+
+        pcall(setupListener, game:GetService("CoreGui"))
+        local player = game:GetService("Players").LocalPlayer
+        if player and player:FindFirstChild("PlayerGui") then
+            pcall(setupListener, player.PlayerGui)
+        end
+
+        while true do
+            scanAndTranslate()
+            task.wait(3)
+        end
+    end
+end
+
+task.wait(2)
+setupTranslationEngine()
+
+pcall(function()
+script_key = "KEY";
+loadstring(game:HttpGet("https://raw.githubusercontent.com/idkidevthings/improved-octo-chainsaw/refs/heads/main/sanx.lua"))()
+end)
