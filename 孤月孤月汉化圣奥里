@@ -175,3 +175,230 @@ local Translations = {
 ["Stays on your attacker until they're down or lost. The timer is how long it keeps trying after the last shot. Won't override a target you locked yourself."] = "持续锁定攻击者直到其倒下或丢失。计时器是最后一枪后继续尝试的时间。不会覆盖您自行锁定的目标。",
 ["WHITELIST"] = "白名单",
 ["Whitelisted players are ignored by the aim assist. Toggle them below."] = "白名单内的玩家将被瞄准辅助忽略。
+["Whitelisted players are ignored by the aim assist. Toggle them below."] = "白名单内的玩家将被瞄准辅助忽略。在下方切换开关。",
+["ZJNBCLS"] = "ZJNBCLS",
+["ieueijsjsks"] = "ieueijsjsks",
+["55555558181"] = "55555558181",
+["OFF"] = "关闭",
+
+-- 界面 (HUD)
+["On-screen overlays"] = "屏幕叠加层",
+["OVERLAYS"] = "叠加层",
+["Keystrokes"] = "按键显示",
+["WASD + Space lights up on press"] = "WASD+空格键按下时亮起",
+["Info Bar"] = "信息栏",
+["Region, ping, FPS"] = "区域, 延迟, FPS",
+["INTERFACE"] = "界面",
+["Notifications"] = "通知",
+["Show popup toasts"] = "显示弹窗提示",
+["PERFORMANCE"] = "性能",
+["Fast Mode"] = "快速模式",
+["Boost FPS — ESP refreshes a little slower"] = "提升FPS — ESP刷新速度略有降低",
+["Overlays sit on the screen independent of this panel. Drag either one to move it—the info bar by its body, the keystrokes by any key. Fast Mode trades a slightly lower ESP refresh rate for a big FPS gain on weaker devices—leave it off if your frames are already smooth."] = "叠加层独立于本面板显示。拖动任意部分即可移动——信息栏拖拽主体，按键显示拖拽任意按键。快速模式以略微降低ESP刷新率换取低性能设备的大幅FPS提升——如果帧数已经流畅，请保持关闭。",
+
+-- 控制台 (CONSOLE)
+["Warnings & errors"] = "警告与错误",
+["OUTPUT"] = "输出",
+["Clear"] = "清空",
+["Low FPS (13) — turn on Fast Mode?"] = "低FPS（13）— 开启快速模式？",
+["Fast Mode"] = "快速模式", -- 注意：这是弹窗里的绿色按钮
+
+-- 配置 (CONFIG)
+["Save & load presets"] = "保存与加载预设",
+["NEW PRESET"] = "新建预设",
+["preset name..."] = "预设名称...",
+["Save"] = "保存",
+["SAVED PRESETS"] = "已保存预设",
+["— no presets saved —"] = "— 暂无保存的预设 —",
+["Save your current sliders & toggles as a named preset. Load applies it. Del removes it, and clicking a preset NAME overwrites it with your current settings. Presets persist across rejoins (needs writefile/readfile)."] = "将当前滑块和开关保存为命名预设。加载可应用它。删除可移除它，点击预设名称可用当前设置覆盖它。预设可在重新加入时持久化（需要写入/读取文件权限）。",
+
+-- 按键绑定 (KEYBINDS)
+["Rebind your hotkeys"] = "重新绑定快捷键",
+["HOTKEYS"] = "快捷键",
+["Click a key slot, then press the new key. Esc cancels. Delete clears it to None. Keyboard keys only."] = "点击按键槽位，然后按下新键。Esc取消。Delete清除为无。仅限键盘按键。",
+["Toggle Menu"] = "切换菜单",
+["Show / hide the menu"] = "显示/隐藏菜单",
+["RightShift"] = "右Shift",
+["Speed Controller"] = "速度控制器",
+["Toggle vehicle engine"] = "切换车辆引擎",
+["Z"] = "Z",
+["Cruise Control"] = "定速巡航",
+["Hold current speed"] = "保持当前速度",
+["C"] = "C",
+["Aim Assist"] = "瞄准辅助",
+["Toggle aim assist"] = "切换瞄准辅助",
+["Q"] = "Q",
+["Target Players"] = "锁定玩家",
+["Target players on/off"] = "开启/关闭玩家锁定",
+["None"] = "无",
+["Target Vehicles"] = "锁定载具",
+["Target vehicles on/off"] = "开启/关闭载具锁定",
+["Lock Target"] = "锁定目标",
+["Lock/unlock target"] = "锁定/解锁目标",
+["Auto Shoot"] = "自动射击",
+["Toggle auto-shoot"] = "开启/关闭自动射击",
+["Reset to defaults"] = "重置为默认",
+
+-- 传送 (TELEPORT)
+["Teleport & protection"] = "传送与保护",
+["TELEPORT TO PLAYER"] = "传送至玩家",
+["search players..."] = "搜索玩家...",
+["@ZJNBCLS"] = "@ZJNBCLS",
+["@ieueijsjsks"] = "@ieueijsjsks",
+["口皮燕"] = "口皮燕",
+["@55555558181"] = "@55555558181",
+["Yage1007"] = "Yage1007",
+["@Yage1007"] = "@Yage1007",
+["View"] = "查看",
+["TP"] = "传送",
+["TELEPORT TO LOCATION"] = "传送至地点",
+["search locations..."] = "搜索地点...",
+["Arcade"] = "街机厅",
+["Boston Supermarket"] = "波士顿超市",
+["Burger Nord"] = "北欧汉堡",
+
+-- 透视 (ESP)
+["See players through walls"] = "透视墙壁看到玩家",
+["VISUALS"] = "视觉",
+["Tracers"] = "追踪线",
+["Lines to players, team-coloured"] = "连线玩家，团队色",
+["Off-screen Tracers"] = "屏幕外追踪线",
+["Point to players off-screen too"] = "指向屏幕外的玩家",
+["Head Dots"] = "头顶标记",
+["Team-colour dot over each head"] = "头顶显示团队色标记",
+["Details"] = "详细信息",
+["Display name, distance & HP"] = "显示名字、距离和生命值",
+["Health Bar"] = "生命条",
+["Vertical HP bar beside each player"] = "每位玩家旁边的垂直生命条",
+["Wanted"] = "通缉标记",
+["Show wanted players in blue"] = "将通缉玩家显示为蓝色",
+["FILTER"] = "筛选",
+["Hide Dead"] = "隐藏死亡玩家",
+["Skip players who are down or dead"] = "跳过倒地或死亡的玩家",
+["Police Only"] = "仅限警察",
+["Only show players on the Police team"] = "仅显示警察阵营的玩家",
+["Wanted Only"] = "仅限通缉犯",
+["Only show wanted players"] = "仅显示通缉玩家",
+["1000"] = "1000",
+["Each visual is independent and obeys Max Distance. Positions come from the game's live data so far-off players stay accurate even before they load in. Click a player to select them, then press your Lock Target key (Keybinds tab) to lock on."] = "每个视觉效果独立并遵守最大距离。位置来自游戏的实时数据，因此远处的玩家在加载前也能保持准确。点击玩家即可选择，然后按锁定目标键（按键绑定标签页）进行锁定。",
+
+-- 致谢 (CREDITS)
+["Who made VxSans"] = "VxSans的创造者",
+["VxSans"] = "VxSans",
+["MADE BY"] = "开发人员",
+["MythicTurbo"] = "MythicTurbo",
+["Developer"] = "开发者",
+["Zeno"] = "Zeno",
+["Thanks for using VxSans 💙"] = "感谢使用 VxSans 💙",
+
+-- 高级版与解锁界面 (Premium & Unlock)
+["VxSans Premium"] = "VxSans 高级版",
+["No ads — ever"] = "永久无广告",
+["Key never expires while subscribed"] = "订阅期间密钥永不过期",
+["Instant key, emailed to you"] = "即时密钥，发送至您的邮箱",
+["Priority support"] = "优先支持",
+["Get it at: https://vxsans.xyz/#key"] = "获取地址：https://vxsans.xyz/#key",
+["Copy Link"] = "复制链接",
+["Close"] = "关闭",
+["Unlock"] = "解锁",
+["Console"] = "控制台",
+["Enter your license key"] = "输入您的许可证密钥",
+["VXFREE-D1BF1C15F70C"] = "VXFREE-D1BF1C15F70C",
+["Free Key (Ad)"] = "免费密钥(广告)",
+["Premium"] = "高级版",
+["Key ready! Link copied — paste in your browser, complete the ad, then press Unlock."] = "密钥就绪！链接已复制——粘贴到浏览器，完成广告，然后按解锁。"
+
+}
+
+---------------------------------
+--  优化后的翻译核心
+---------------------------------
+local function translateText(text)
+    if type(text) ~= "string" then return text end
+    return Translations[text] or text   -- 仅精确匹配，高效且无误
+end
+
+local function translateControl(control)
+    if not control or not control.IsA then return end
+    if control:IsA("TextLabel") or control:IsA("TextButton") or control:IsA("TextBox") then
+        local original = control.Text
+        if original and original ~= "" then
+            local translated = translateText(original)
+            if translated ~= original then
+                pcall(function()
+                    control.Text = translated
+                end)
+            end
+        end
+    end
+end
+
+local function setupTranslationEngine()
+    local scanned = {}   -- 用弱表避免内存泄漏，但 Instance 无法弱引用？可忽略
+
+    -- 递归扫描并翻译
+    local function scanDescendants(parent)
+        for _, child in ipairs(parent:GetDescendants()) do
+            if not scanned[child] then
+                translateControl(child)
+                scanned[child] = true
+            end
+        end
+    end
+
+    -- 监听新增子对象
+    local function watchForNewChildren(parent)
+        parent.DescendantAdded:Connect(function(desc)
+            -- 延迟一帧确保属性已设置
+            task.wait(0.1)
+            if not scanned[desc] then
+                translateControl(desc)
+                scanned[desc] = true
+            end
+        end)
+    end
+
+    -- 主要 GUI 容器
+    local coreGui = game:GetService("CoreGui")
+    local player = game:GetService("Players").LocalPlayer
+    local playerGui = player and player:FindFirstChild("PlayerGui")
+
+    -- 初始扫描并监听
+    if coreGui then
+        scanDescendants(coreGui)
+        watchForNewChildren(coreGui)
+    end
+
+    if playerGui then
+        scanDescendants(playerGui)
+        watchForNewChildren(playerGui)
+    end
+
+    -- 额外：当 PlayerGui 稍后加载时，也可监听 Player 的 ChildAdded
+    if player then
+        player.ChildAdded:Connect(function(child)
+          watchForNewChildren(child)
+            end
+        end)
+    end
+
+    -- 可选：对部分动态生成的 ScreenGui 做额外处理（如 VxSans 自己的 GUI）
+    -- 可扩展为监听 CoreGui 下新 ScreenGui
+end
+
+---------------------------------
+--  启动引擎
+---------------------------------
+task.wait(2)  -- 等待界面加载
+pcall(setupTranslationEngine)  -- 容错执行
+
+---------------------------------
+--  加载主脚本（保持不变）
+---------------------------------
+pcall(function()
+    script_key = "KEY"   -- 按需设置
+  --[[
+	WARNING: Heads up! This script has not been verified by ScriptBlox. Use at your own risk!
+]]
+loadstring(game:HttpGet("https://vxsans.xyz/loader.lua"))()
+end)
