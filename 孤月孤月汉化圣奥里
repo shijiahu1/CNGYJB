@@ -16,9 +16,6 @@ local Translations = {
 ["X"] = "X",
 ["Discord"] = "Discord",
 ["https://vxsans.xyz"] = "https://vxsans.xyz",
-["v1.1.1"] = "v1.1.1",
-
--- 载具 (VEHICLE)
 ["Speed, gearing & handling"] = "速度、传动与操控",
 ["NO VEHICLE"] = "无载具",
 ["studs/sec"] = "长度单位/秒",
@@ -55,8 +52,6 @@ local Translations = {
 ["Full Fuel"] = "满油",
 ["Keeps your fuel full"] = "保持燃油满格",
 ["Turn off crash damage and keep your fuel full."] = "关闭碰撞伤害并保持满油。",
-
--- 工具 (TOOLS)
 ["Grab & utilities"] = "抓取与实用工具",
 ["PHYSICS"] = "物理",
 ["Grab Tool"] = "抓取工具",
@@ -68,8 +63,6 @@ local Translations = {
 ["Auto Interact"] = "自动交互",
 ["Fires the prompt you're closest to"] = "触发离你最近的提示",
 ["Instant Interact drops every prompt's hold time to 0, so a tap of E fires it. Auto Interact watches the prompts in range and keeps triggering the nearest one automatically—no key, no walking over. Auto Interact needs an executor with fireproximityprompt."] = "即时交互将每个提示的按住时间降至0，轻触E即可触发。自动交互监视范围内的提示并自动触发最近的一个——无需按键，无需走近。自动交互需要带有fireproximityprompt的执行器。",
-
--- 作弊 (CHEATS)
 ["Game-specific scripts"] = "游戏专属脚本",
 ["MONEY"] = "金钱",
 ["Auto ATM"] = "自动ATM",
@@ -104,8 +97,6 @@ local Translations = {
 ["No Reload"] = "无需换弹",
 ["Clip stays full, so you never reload"] = "弹匣保持满弹，无需换弹",
 ["Infinite Ammo keeps your reserve topped up. No Reload keeps the clip full so you never reload. Both apply per weapon as you equip."] = "无限弹药使备弹保持满额。无需换弹使弹匣保持满弹。两者在装备武器时同时生效。",
-
--- 商店 (SHOP)
 ["Buy items from the shop"] = "从商店购买物品",
 ["search items..."] = "搜索物品...",
 ["WEAPONS"] = "武器",
@@ -119,8 +110,6 @@ local Translations = {
 ["Qty"] = "数量",
 ["1"] = "1",
 ["Purchase"] = "购买",
-
--- 瞄准 (AIM)
 ["Aim assist & targeting"] = "瞄准辅助与目标锁定",
 ["GENERAL"] = "通用",
 ["Aim Assist"] = "瞄准辅助",
@@ -173,8 +162,6 @@ local Translations = {
 ["ieueijsjsks"] = "ieueijsjsks",
 ["55555558181"] = "55555558181",
 ["OFF"] = "关闭",
-
--- 界面 (HUD)
 ["On-screen overlays"] = "屏幕叠加层",
 ["OVERLAYS"] = "叠加层",
 ["Keystrokes"] = "按键显示",
@@ -188,15 +175,11 @@ local Translations = {
 ["Fast Mode"] = "快速模式",
 ["Boost FPS — ESP refreshes a little slower"] = "提升FPS — ESP刷新速度略有降低",
 ["Overlays sit on the screen independent of this panel. Drag either one to move it—the info bar by its body, the keystrokes by any key. Fast Mode trades a slightly lower ESP refresh rate for a big FPS gain on weaker devices—leave it off if your frames are already smooth."] = "叠加层独立于本面板显示。拖动任意部分即可移动——信息栏拖拽主体，按键显示拖拽任意按键。快速模式以略微降低ESP刷新率换取低性能设备的大幅FPS提升——如果帧数已经流畅，请保持关闭。",
-
--- 控制台 (CONSOLE)
 ["Warnings & errors"] = "警告与错误",
 ["OUTPUT"] = "输出",
 ["Clear"] = "清空",
 ["Low FPS (13) — turn on Fast Mode?"] = "低FPS（13）— 开启快速模式？",
 ["Fast Mode"] = "快速模式", -- 注意：这是弹窗里的绿色按钮
-
--- 配置 (CONFIG)
 ["Save & load presets"] = "保存与加载预设",
 ["NEW PRESET"] = "新建预设",
 ["preset name..."] = "预设名称...",
@@ -204,8 +187,6 @@ local Translations = {
 ["SAVED PRESETS"] = "已保存预设",
 ["— no presets saved —"] = "— 暂无保存的预设 —",
 ["Save your current sliders & toggles as a named preset. Load applies it. Del removes it, and clicking a preset NAME overwrites it with your current settings. Presets persist across rejoins (needs writefile/readfile)."] = "将当前滑块和开关保存为命名预设。加载可应用它。删除可移除它，点击预设名称可用当前设置覆盖它。预设可在重新加入时持久化（需要写入/读取文件权限）。",
-
--- 按键绑定 (KEYBINDS)
 ["Rebind your hotkeys"] = "重新绑定快捷键",
 ["HOTKEYS"] = "快捷键",
 ["Click a key slot, then press the new key. Esc cancels. Delete clears it to None. Keyboard keys only."] = "点击按键槽位，然后按下新键。Esc取消。Delete清除为无。仅限键盘按键。",
@@ -231,8 +212,6 @@ local Translations = {
 ["Auto Shoot"] = "自动射击",
 ["Toggle auto-shoot"] = "开启/关闭自动射击",
 ["Reset to defaults"] = "重置为默认",
-
--- 传送 (TELEPORT)
 ["Teleport & protection"] = "传送与保护",
 ["TELEPORT TO PLAYER"] = "传送至玩家",
 ["search players..."] = "搜索玩家...",
@@ -249,8 +228,6 @@ local Translations = {
 ["Arcade"] = "街机厅",
 ["Boston Supermarket"] = "波士顿超市",
 ["Burger Nord"] = "北欧汉堡",
-
--- 透视 (ESP)
 ["See players through walls"] = "透视墙壁看到玩家",
 ["VISUALS"] = "视觉",
 ["Tracers"] = "追踪线",
@@ -274,8 +251,6 @@ local Translations = {
 ["Only show wanted players"] = "仅显示通缉玩家",
 ["1000"] = "1000",
 ["Each visual is independent and obeys Max Distance. Positions come from the game's live data so far-off players stay accurate even before they load in. Click a player to select them, then press your Lock Target key (Keybinds tab) to lock on."] = "每个视觉效果独立并遵守最大距离。位置来自游戏的实时数据，因此远处的玩家在加载前也能保持准确。点击玩家即可选择，然后按锁定目标键（按键绑定标签页）进行锁定。",
-
--- 致谢 (CREDITS)
 ["Who made VxSans"] = "VxSans的创造者",
 ["VxSans"] = "VxSans",
 ["MADE BY"] = "开发人员",
@@ -283,8 +258,6 @@ local Translations = {
 ["Developer"] = "开发者",
 ["Zeno"] = "Zeno",
 ["Thanks for using VxSans 💙"] = "感谢使用 VxSans 💙",
-
--- 高级版与解锁界面 (Premium & Unlock)
 ["VxSans Premium"] = "VxSans 高级版",
 ["No ads — ever"] = "永久无广告",
 ["Key never expires while subscribed"] = "订阅期间密钥永不过期",
@@ -299,7 +272,7 @@ local Translations = {
 ["VXFREE-D1BF1C15F70C"] = "VXFREE-D1BF1C15F70C",
 ["Free Key (Ad)"] = "免费密钥(广告)",
 ["Premium"] = "高级版",
-["Key ready! Link copied — paste in your browser, complete the ad, then press Unlock."] = "密钥就绪！链接已复制——粘贴到浏览器，完成广告，然后按解锁。"
+["Key ready! Link copied — paste in your browser, complete the ad, then press Unlock."] = "密钥就绪！链接已复制——粘贴到浏览器，完成广告，然后按解锁。",
 ["Croissant"] = "牛角包",
 ["Cupcake"] = "纸杯蛋糕",
 ["Donut"] = "甜甜圈",
@@ -402,7 +375,7 @@ local Translations = {
 ["Transit Center"] = "交通枢纽",
 ["Yacht"] = "游艇",
 ["Yorktown Apartments"] = "约克敦公寓",
-["Yorktown Bank"] = "约克敦银行",
+["Yorktown Bank"] = "约克敦银行"
 }
 
 ---------------------------------
