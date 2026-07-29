@@ -272,7 +272,6 @@ local Translations = {
 ["VXFREE-D1BF1C15F70C"] = "VXFREE-D1BF1C15F70C",
 ["Free Key (Ad)"] = "免费密钥(广告)",
 ["Premium"] = "高级版",
-["Key ready! Link copied — paste in your browser, complete the ad, then press Unlock."] = "密钥就绪！链接已复制——粘贴到浏览器，完成广告，然后按解锁。",
 ["Croissant"] = "牛角包",
 ["Cupcake"] = "纸杯蛋糕",
 ["Donut"] = "甜甜圈",
@@ -376,6 +375,7 @@ local Translations = {
 ["Yacht"] = "游艇",
 ["Yorktown Apartments"] = "约克敦公寓",
 ["Yorktown Bank"] = "约克敦银行"
+
 }
 
 ---------------------------------
